@@ -1,0 +1,7 @@
+<div class="notification-popup" [ngClass]="type">
+    <button (click)="close()">
+      <img [src]="type === 'success' ? 'assets/check.png' : 'assets/x-mark.png'" alt="" />
+    </button>
+    <p>{{ message }}</p>
+  </div>
+  

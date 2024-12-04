@@ -1,0 +1,126 @@
+html, body {
+    height: 100%;
+    margin: 0;
+  }
+  
+  #sidebar-container {
+    width: 220px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+    top: 0;
+    left: 0;
+    z-index: 4000;
+  }
+  
+  .icon-container {
+    height: 55px;
+    background: #fff;
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    border-right: 1px solid black;
+  }
+  
+  .icon-container img:nth-of-type(1) {
+    width: 131px;
+    height: 37px;
+    padding-left: 13px;
+  }
+  
+  .icon-container img:nth-of-type(2) {
+    width: 15px;
+    height: 12px;
+  }
+  
+  .black-icon {
+    filter: none; 
+    transition: none;
+  }
+  
+  .white-icon {
+    filter: brightness(0) invert(1); 
+    transition: filter 0.3s ease;
+  }
+  
+  .green-icon {
+    filter: brightness(0) saturate(100%) invert(52%) sepia(66%) saturate(557%)
+      hue-rotate(72deg) brightness(88%) contrast(102%);
+    transition: filter 0.3s ease;
+  }
+  
+  .topic {
+    background: #5a6276; 
+    flex-grow: 1;
+    overflow-y: auto;
+  }
+  
+  .option {
+    height: 50px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    transition: background-color 0.3s ease; 
+  }
+  
+  .option div.status-bar {
+    height: 50px;
+    width: 5px;
+    background: #5CB800; 
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0.3s ease, opacity 0.3s ease;
+  }
+  
+  .option.highlighted div.status-bar {
+    visibility: visible;
+    opacity: 1;
+  }
+  
+  .option img {
+    width: 15px;
+    height: 12px;
+    transition: filter 0.3s ease;
+  }
+  
+  .option h1 {
+    font-weight: normal;
+    font-size: 13px;
+    color: #ffffff; 
+    transition: color 0.3s ease;
+  }
+  
+  .option.highlighted h1 {
+    color: #5CB800; 
+  }
+  
+  .question {
+    padding: 0;
+    margin: 0;
+    height: 50px;
+    display: flex;
+    font-size: 13px;
+    gap: 15px;
+    align-items: center;
+    list-style: none;
+    color: #fff;
+    background: #1a2334;
+  }
+  
+  .question div {
+    height: 50px;
+    width: 5px;
+    background: #FFFFFF;
+  }
+  
+  .question img {
+    width: 16px;
+    height: 13.5px;
+    margin-right: 18px;
+  }
+  
+  .icon {
+    transition: filter 0.3s ease;
+  }
+  

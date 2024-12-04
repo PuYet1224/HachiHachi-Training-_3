@@ -1,0 +1,34 @@
+<div id="Header2">
+    <div class="under-filter">
+      <div class="search-container">
+        <label for="search-input" class="search-label">
+          Tìm kiếm
+        </label>
+        <div class="input-group">
+          <div class="input-wrapper">
+            <img src="assets/glass.png" alt="Search Icon" class="search-icon" />
+            <input
+              id="search-input"
+              type="text"
+              placeholder="Tìm theo mã và câu hỏi"
+              [(ngModel)]="searchText"
+              (ngModelChange)="onSearchTextChange($event)"
+              [disabled]="isDisabled"
+              aria-label="Search Input"
+            />
+          </div>
+          <button
+            type="button"
+            class="search-button"
+            (click)="onSearch.emit(searchText.trim())"
+            [disabled]="isDisabled || searchText.trim() === ''"
+            aria-label="Search"
+          >
+            <img src="assets/glass.png" alt="Search Icon" class="button-icon" />
+            Tìm
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  

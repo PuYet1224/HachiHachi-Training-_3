@@ -1,0 +1,136 @@
+<div class="product-list">
+    <app-header2 
+      [isDisabled]="selectedRowIds.size > 0 || showDeleteConfirm" 
+      (onFilterChange)="handleFilterChange($event)" 
+      #header2>
+    </app-header2>
+    
+    <app-filter-bar 
+      [isDisabled]="selectedRowIds.size > 0 || showDeleteConfirm" 
+      (onSearch)="handleSearch($event)" 
+      (onReset)="handleResetFilters()">
+    </app-filter-bar>
+    
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>
+              <div style="display: flex; align-items: center;">
+                <input type="checkbox" (change)="handleSelectAll($event)" [checked]="areAllRowsSelected" #selectAll>
+                <span style="margin-left: 5px;">Câu hỏi</span>
+              </div>
+            </th>
+            <th>Phân nhóm</th>
+            <th>Thời gian làm</th>
+            <th>Tình Trạng</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of paginatedData()">
+            <td>
+              <div class="question-cell">
+                <input type="checkbox" [checked]="isRowSelected(row)" (change)="handleRowSelect($event, row)">
+                <div title="{{row.question}}">
+                  <div style="font-weight: bold; margin-bottom: 5px;">{{ row.question }}</div>
+                  <div style="font-size: 13px;">
+                    ID: {{ row.id }} <span style="color: #BDC2D2"> | </span> Type: {{ row.type }}
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div title="{{ row.description }}">{{ row.description }}</div>
+            </td>
+            <td>
+              <div style="text-align: center; font-weight: bold;" title="{{ row.duration }}">{{ row.duration }}</div>
+            </td>
+            <td>
+              <span [ngStyle]="{'color': getStatusColor(row.status)}" title="{{ row.status }}">{{ row.status }}</span>
+            </td>
+            <td>
+              <div class="option-button-container">
+                <div class="option-container" (click)="toggleDropdown(row._uniqueId)">
+                  <img src="assets/option.png" alt="Options" class="option-button">
+                </div>
+                <div class="dropdown-menu" *ngIf="openDropdown === row._uniqueId">
+                  <div class="dropdown-item" *ngFor="let button of statusButtonsMap[row.status]" (click)="handleDropdownAction(buttonActionMap[button], row._uniqueId)">
+                    <img 
+                      [src]="
+                        button === 'Chỉnh sửa' ? 'assets/pencil.png' :
+                        button === 'Xem chi tiết' ? 'assets/view.png' :
+                        button === 'Gửi duyệt' ? 'assets/share.png' :
+                        button === 'Phê duyệt' ? 'assets/check.png' :
+                        button === 'Ngừng hiển thị' ? 'assets/traffic-signal.png' :
+                        button === 'Trả về' ? 'assets/turn-back.png' :
+                        button === 'Xóa' ? 'assets/delete.png' : null
+                      " 
+                      alt="{{ button }}">
+                    <a href="#">{{ button }}</a>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <app-custom-pagination
+        [rowsPerPage]="rowsPerPage"
+        [rowCount]="rowCount"
+        [currentPage]="currentPage"
+        (onChangePage)="handleChangePage($event)"
+        (onChangeRowsPerPage)="handleChangeRowsPerPage($event)">
+      </app-custom-pagination>
+    </div>
+  
+    <app-action-popup
+      *ngIf="isActionPopupOpen"
+      [selectedCount]="selectedRowIds.size"
+      [statuses]="selectedStatusesForActionPopup"
+      (onSend)="handleAction('send')"
+      (onApprove)="handleAction('approve')"
+      (onHide)="handleAction('hide')"
+      (onReturn)="handleAction('return')"
+      (onDelete)="handleDelete()"
+      (onClose)="handleClose()">
+    </app-action-popup>
+    
+    <div *ngIf="showDeleteConfirm" class="delete-confirm-modal">
+      <div class="delete">
+        <img src="assets/triangle-exclamation-solid.svg" alt="Danger">
+        <p>XÓA CÂU HỎI</p>
+      </div>
+      <div class="confirm-delete">
+        <p>Bạn có chắc chắn muốn xóa {{ deleteTargetIds.size > 1 ? 'các câu hỏi này?' : 'câu hỏi này?' }}</p>
+        <p *ngIf="deleteTargetIds.size === 1" style="color: #36C8CF;">
+          {{ getQuestionById(deleteTargetIdsArray[0]) }}
+        </p>
+        <ul *ngIf="deleteTargetIds.size > 1" style="color: #36C8CF; list-style-type: none; padding: 0;">
+          <li *ngFor="let id of deleteTargetIdsArray.slice(0, 3)">
+            {{ getQuestionById(id) }}
+          </li>
+          <li *ngIf="deleteTargetIds.size > 3">...</li>
+        </ul>
+        <p style="color: #000;">
+          Đơn vị bị xóa sẽ <strong>KHÔNG</strong> thể khôi phục lại
+        </p>
+      </div>
+      <div class="delete-button">
+        <button (click)="handleDeleteCancel()">KHÔNG XÓA</button>
+        <button (click)="handleDeleteConfirm()">
+          <img src="assets/delete.png" alt="Xóa">
+          <p>XÓA</p>
+        </button>
+      </div>
+    </div>
+    
+    <app-notification
+      *ngIf="notification"
+      [message]="notification.message"
+      [type]="notification.type"
+      (onClose)="notification = null">
+    </app-notification>
+  </div>
+  

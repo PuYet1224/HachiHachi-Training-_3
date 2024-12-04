@@ -1,0 +1,47 @@
+<div id="sidebar-container">
+    <div class="icon-container">
+      <img src="assets/HachiLogo.svg" alt="Logo Hachi" />
+      <img
+        src="{{ isRating ? 'assets/chevron-up-solid.svg' : 'assets/chevron-down-solid.svg' }}"
+        alt="Toggle Rating"
+        (click)="toggleRating()"
+        class="black-icon"
+        style="cursor: pointer;"
+      />
+    </div>
+  
+    <div class="topic">
+      <div class="option" [ngClass]="{'highlighted': isHighlighted}">
+        <div
+          class="status-bar"
+          [ngClass]="{
+            'visible-bar': isHighlighted,
+            'hidden-bar': !isHighlighted
+          }"
+        ></div>
+        <img
+          src="assets/bars-solid.svg"
+          alt="Menu Icon"
+          [ngClass]="{'green-icon': isHighlighted, 'white-icon': !isHighlighted}"
+        />
+        <h1
+          [ngClass]="{'green-title': isHighlighted, 'white-title': !isHighlighted}"
+        >
+          ĐÁNH GIÁ NHÂN SỰ
+        </h1>
+        <img
+          src="{{ isHighlighted ? 'assets/chevron-up-solid.svg' : 'assets/chevron-down-solid.svg' }}"
+          alt="Toggle Question"
+          (click)="toggleQuestion()"
+          [ngClass]="{'green-icon': isHighlighted, 'white-icon': !isHighlighted}"
+          style="cursor: pointer;"
+        />
+      </div>
+      <ul class="question" *ngIf="isHighlighted && isRating">
+        <div></div>
+        <img src="assets/question-solid.svg" alt="Question Icon" class="icon white-icon" />
+        <li class="question-title">Ngân hàng câu hỏi</li>
+      </ul>
+    </div>
+  </div>
+  

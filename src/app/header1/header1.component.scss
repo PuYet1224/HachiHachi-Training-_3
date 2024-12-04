@@ -1,0 +1,121 @@
+#Header1 {
+    width: calc(100vw - 235px);
+    height: 55px;
+    margin: 0 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    background: #fff;
+    position: fixed;
+    z-index: 1000;
+  }
+  
+  .left-h {
+    margin-left: 15px;
+    display: flex;
+    align-items: center;
+    gap: 20px; 
+  }
+  
+  .hyphen-line {
+    font-size: 15px;
+    color: #ccc;
+    letter-spacing: 1px; 
+  }
+  
+  .vertical-line {
+    color: #ccc;
+    font-size: 15px;
+    width: 3px;
+    height: 40px; 
+    background-color: #ccc; 
+    margin: 0 10px;
+  }
+  
+  .left-h .ns {
+    font-weight: 670; 
+    font-size: 16px; 
+    color: #008000; 
+    text-decoration: none;
+    position: relative;
+    display: inline-block;
+    line-height: 1;
+    text-align: center;
+    padding: 5px 0;
+  }
+  
+  .left-h .ns:after {
+    content: "";
+    position: absolute;
+    background-color: #008000; 
+    height: 3px; 
+    border-radius: 2px; 
+    width: 110%; 
+    left: -5%; 
+    bottom: -8px; 
+  }
+  
+  .right-h {
+    display: flex;
+    align-items: flex-end;
+    gap: 30px;
+    margin-right: 20px;
+  }
+  
+  .right-h img {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .notification {
+    position: relative;
+  }
+  
+  .notification a {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: #f1802e;
+    color: #fff;
+    border-radius: 999px;
+    width: 22px;
+    height: 22px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .user {
+    position: relative;
+    width: auto;
+    height: 35px;
+  }
+  
+  .user a {
+    background: #05d103;
+    content: "";
+    position: absolute;
+    height: 3px;
+    border-radius: 999px;
+    width: 12px;
+    height: 12px;
+    right: 0;
+    bottom: 0;
+  }
+  
+  .user img {
+    margin-left: 10px;
+    width: 35px;
+    height: 35px;
+  }
+  
+  button {
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  button:hover {
+    filter: brightness(0.9);
+  }
+  

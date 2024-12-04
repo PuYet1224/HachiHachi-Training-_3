@@ -1,0 +1,30 @@
+<div class="action-popup">
+    <div class="selected-count">
+      <span>{{selectedCount}}</span>
+      <span>Đã chọn</span>
+    </div>
+    <button class="popup-button" *ngIf="canShowSend()" (click)="onSend.emit()">
+      <img src="assets/share.png" alt="Gửi duyệt" />
+      <span>Gửi duyệt</span>
+    </button>
+    <button class="popup-button" *ngIf="canShowReturn()" (click)="onReturn.emit()">
+      <img src="assets/turn-back.png" alt="Trả về" />
+      <span>Trả về</span>
+    </button>
+    <button class="popup-button" *ngIf="canShowApprove()" (click)="onApprove.emit()">
+      <img src="assets/check.png" alt="Phê duyệt" />
+      <span>Duyệt áp dụng</span>
+    </button>
+    <button class="popup-button" *ngIf="canShowHide()" (click)="onHide.emit()">
+      <img src="assets/traffic-signal.png" alt="Ngừng áp dụng" />
+      <span>Ngừng áp dụng</span>
+    </button>
+    <button class="popup-button delete" (click)="onDelete.emit()">
+      <img src="assets/delete.png" alt="Xóa câu hỏi" />
+      <span>Xóa câu hỏi</span>
+    </button>
+    <button class="popup-button close" (click)="onClose.emit()">
+      <img src="assets/close.png" alt="Close" />
+    </button>
+  </div>
+  

@@ -1,0 +1,38 @@
+.notification-popup {
+    padding: 0px 5px;
+    border-radius: 5px;
+    position: fixed;
+    bottom: 60px;
+    left: 100px;
+    z-index: 2500; 
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    color: white;
+    width: fit-content;
+    height: 54px;
+    font-size: 13px;
+  }
+  
+  .notification-popup.success {
+    background-color: #1a6634;
+  }
+  
+  .notification-popup.error {
+    background-color: #ff4c4c;
+  }
+  
+  .notification-popup button {
+    background: none;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    filter: invert(100%);
+  }
+  
+  .notification-popup button img {
+    width: 16px;
+    height: 16px;
+  }
+  

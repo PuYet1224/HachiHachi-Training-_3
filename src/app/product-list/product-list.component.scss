@@ -1,0 +1,230 @@
+.product-list {
+    width: calc(100vw - 245px);
+    overflow-x: hidden;
+    margin: 191px 5px 0 5px;
+    padding-bottom: 60px;
+  }
+  
+  .table-container {
+    position: relative;
+  }
+  
+  .data-table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  .data-table th, .data-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .data-table th {
+    background-color: #f5f5f6;
+    font-weight: bold;
+  }
+  
+  .data-table tr:hover {
+    background-color: rgba(26, 102, 52, 0.7);
+    color: #fff;
+  }
+  
+  .question-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  
+  .option-button-container {
+    position: relative;
+  }
+  
+  .dropdown-menu {
+    z-index: 10;
+    position: absolute;
+    background: #bdc2d2;
+    right: 35px;
+    top: 16px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    border-radius: 5px;
+  }
+  
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 8px 10px;
+    width: calc(100% - 20px);
+    color: rgba(255, 255, 255, 0.6);
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .dropdown-item:hover {
+    background-color: #a0a5b1;
+    color: #fff;
+  }
+  
+  .dropdown-item img {
+    width: 20px;
+    height: 20px;
+    filter: brightness(0) invert(1);
+  }
+  
+  .dropdown-item a {
+    color: inherit;
+    text-decoration: none;
+    font-size: 14px;
+  }
+  
+  .delete-confirm-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    width: 316px;
+    height: 243px;
+    z-index: 3000;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    pointer-events: auto;
+    border-radius: 8px;
+    padding: 0;
+    overflow: hidden;
+  }
+  
+  .delete-confirm-modal .delete {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding-top: 20px;
+  }
+  
+  .delete-confirm-modal .delete img {
+    width: 20px;
+    height: 22px;
+  }
+  
+  .delete-confirm-modal .delete p {
+    color: #FD7676;
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+  }
+  
+  .confirm-delete {
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    font-size: 13px;
+    text-align: center;
+    padding: 16px 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow-y: auto;
+  }
+  
+  .confirm-delete p {
+    margin: 8px 0;
+  }
+  
+  .confirm-delete p:nth-of-type(2) {
+    color: #36C8CF;
+    margin: 0;
+  }
+  
+  .delete-button {
+    display: flex;
+    border-top: 1px solid #ddd;
+    height: 48px;
+  }
+  
+  .delete-button button {
+    flex: 1;
+    border: none;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 20px;
+    cursor: pointer;
+  }
+  
+  .delete-button button:nth-of-type(1) {
+    background: #f5f5f5;
+    color: #36C8CF;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 8px;
+    border-right: 1px solid #ddd;
+  }
+  
+  .delete-button button:nth-of-type(2) {
+    background: #FD7676;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 8px;
+  }
+  
+  .delete-button button:nth-of-type(2) img {
+    margin-right: 6px;
+    filter: invert(100%);
+  }
+  
+  .notification-popup {
+    padding: 0px 5px;
+    border-radius: 5px;
+    position: fixed;
+    bottom: 60px;
+    left: 100px;
+    z-index: 2500;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    color: white;
+    width: fit-content;
+    height: 54px;
+    font-size: 13px;
+  }
+  
+  .notification-popup.success {
+    background-color: #1a6634;
+  }
+  
+  .notification-popup.error {
+    background-color: #ff4c4c;
+  }
+  
+  .notification-popup button {
+    background: none;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    filter: invert(100%);
+  }
+  
+  .notification-popup button img {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .delete-confirm-modal .confirm-delete ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
