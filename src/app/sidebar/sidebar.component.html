@@ -1,0 +1,33 @@
+<div id="sidebar-container">
+  <div class="icon-container">
+    <img src="../../assets/HachiLogo.svg" alt="" />
+    <img src="../../assets/chevron-up-solid.svg"
+         alt=""
+         style="cursor: pointer;"
+         [style.transform]="isEvaluationOpen ? 'rotate(0deg)' : 'rotate(180deg)'"
+         (click)="toggleEvaluation()"/>
+  </div>
+
+  <div class="topic">
+    <div class="option"
+         *ngIf="isEvaluationOpen"
+         [class.open]="isQuestionBankOpen"
+         (click)="toggleQuestionBank()">
+      <div></div>
+      <img src="../../assets/bars-solid.svg" alt="" class="icon-bars"/>
+      <h1>ĐÁNH GIÁ NHÂN SỰ</h1>
+      <img src="../../assets/chevron-up-solid.svg" alt=""
+           style="cursor: pointer;"
+           [style.transform]="isQuestionBankOpen ? 'rotate(0deg)' : 'rotate(180deg)'"/>
+    </div>
+
+    <ul class="question"
+        *ngIf="isEvaluationOpen && isQuestionBankOpen"
+        [class.selected]="isQuestionBankSelected"
+        (click)="selectQuestionBank()">
+      <div></div>
+      <img src="../../assets/question-solid.svg" alt="" />
+      <li>Ngân hàng câu hỏi</li>
+    </ul>
+  </div>
+</div>

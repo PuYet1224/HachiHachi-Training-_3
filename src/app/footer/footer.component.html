@@ -1,0 +1,68 @@
+<div class="custom-pagination">
+  <div class="left-c">
+    <span>Hiển thị mỗi trang</span>
+    <select [value]="rowsPerPage" (change)="onItemsPerPageChangeSelect($event)">
+      <option *ngFor="let size of [25, 50, 75, 100]" [value]="size">
+        {{ size }}
+      </option>
+    </select>
+  </div>
+  <div class="right-c">
+    <button 
+      (click)="handleFirst()" 
+      [disabled]="currentPage === 1"
+      class="arrow-button first-last-button"
+    >
+      Đầu
+    </button>
+    <button 
+      (click)="handlePrev()" 
+      [disabled]="currentPage === 1"
+      class="arrow-button"
+    >
+      <img [src]="left_arrow" alt="Trang Trước" />
+    </button>
+
+    <ng-container *ngFor="let page of pages">
+      <button
+        *ngIf="isNumberPage(page)"
+        (click)="goToPage(page)"
+        class="page-button"
+        [class.active]="isActivePage(page)"
+      >
+        {{ page }}
+      </button>
+
+      <button
+        *ngIf="isLeftEllipsis(page)"
+        (click)="handleEllipsis('left')"
+        class="ellipsis-button"
+      >
+        ...
+      </button>
+
+      <button
+        *ngIf="isRightEllipsis(page)"
+        (click)="handleEllipsis('right')"
+        class="ellipsis-button"
+      >
+        ...
+      </button>
+    </ng-container>
+
+    <button 
+      (click)="handleNext()" 
+      [disabled]="currentPage === totalPages" 
+      class="arrow-button"
+    >
+      <img [src]="right_arrow" alt="Trang Tiếp Theo" />
+    </button>
+    <button 
+      (click)="handleLast()" 
+      [disabled]="currentPage === totalPages" 
+      class="arrow-button first-last-button"
+    >
+      Cuối
+    </button>
+  </div>
+</div>

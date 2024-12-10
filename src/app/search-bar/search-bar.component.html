@@ -1,0 +1,29 @@
+<div id="SearchBar">
+  <div class="above-filter">
+    <div>
+      <img src="../../assets//funnel.png" alt="" />
+      <p>LỌC DỮ LIỆU</p>
+    </div>
+    <a (click)="resetSearch()" href="#">Reset bộ lọc</a>
+  </div>
+  <div class="under-filter">
+    <div class="search-container">
+      <label class="search-label">Tìm kiếm</label>
+      <div class="input-group">
+        <div class="input-wrapper">
+          <img src="../../assets/glass.png" alt="Search Icon" class="search-icon" />
+          <input
+            type="text"
+            placeholder="Tìm theo mã và câu hỏi"
+            [(ngModel)]="searchText"
+            (keypress)="searchOnEnter($event)"
+          />
+        </div>
+        <button type="button" (click)="search()" class="search-button">
+          <img src="../../assets/glass.png" alt="Search Icon" class="button-icon" />
+          Tìm
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

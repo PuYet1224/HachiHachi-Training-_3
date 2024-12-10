@@ -1,0 +1,99 @@
+.custom-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 1px; 
+  font-family: Mulish, Arial, sans-serif;
+  font-size: 13px;
+  position: fixed;
+  bottom: 0;
+  background: #f5f5f6;
+  z-index: 999;
+  width: calc(100vw - 245px); 
+}
+
+.custom-pagination .left-c {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: 10px;
+}
+
+.left-c span {
+  font-weight: 600;
+  color: #959DB3;
+}
+
+.custom-pagination select {
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+  background: #fff;
+  cursor: pointer;
+}
+
+.right-c {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.right-c button {
+  width: 40px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  background: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #959DB3; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s, color 0.3s; 
+}
+
+.right-c button img {
+  width: 12px;
+  height: 12px;
+}
+
+.right-c .first-last-button {
+  width: 60px; 
+}
+
+.right-c button.active {
+  background-color: #959DB3; 
+  color: white; 
+}
+
+.right-c button:not(.active):hover {
+  background-color: #e0e0e0;
+}
+
+.right-c button:disabled {
+  background-color: #ddd;
+  color: #999;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.right-c button.active img {
+  filter: invert(1);
+}
+
+.right-c .ellipsis-button {
+  color: #959DB3;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0 10px;
+  border-radius: 5px;
+}
+
+.right-c .ellipsis-button:hover {
+  background-color: #e0e0e0;
+}

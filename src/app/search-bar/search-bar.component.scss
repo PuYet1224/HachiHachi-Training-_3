@@ -1,0 +1,126 @@
+@import 'src/styles';
+#SearchBar {
+  display: flex;
+  height: 53px;
+  width: calc(100vw - 245px);
+  margin: 0 auto;
+  padding: 13px 0px;
+  border-bottom: 1.5px solid #BDC2D2;
+  background: #f5f5f6;
+  font-family: $primary-font;
+}
+.above-filter {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 150px;
+  height: 47px;
+}
+.above-filter div {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.above-filter img {
+  margin-right: 10px;
+  width: 15px;
+  height: 16px;
+  filter: invert(47%) sepia(9%) saturate(471%) hue-rotate(182deg)
+    brightness(90%) contrast(85%);
+}
+.above-filter p {
+  margin: 0 40px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+.above-filter a {
+  margin-left: -10px;
+  font-size: 13px;
+  color: #008000;
+}
+
+.search-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-label {
+  font-size: 13px;
+  color: #707070;
+  margin-bottom: 5px;
+}
+
+.input-group {
+  display: flex;
+  align-items: start;
+  gap: 7px;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  border: 0px solid #ccc;
+  border-radius: 2px;
+  padding: 0 5px;
+  height: 29px;
+  width: 372px;
+  background-color: #fff;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px;
+}
+
+.search-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+  opacity: 0.6;
+}
+
+.input-wrapper input {
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 13px;
+  color: #000;
+  background-color: transparent;
+}
+
+.input-wrapper input::placeholder {
+  color: #959db3;
+}
+
+.search-button {
+  display: flex;
+  align-items: center;
+  background-color: #008000;
+  color: #fff;
+  border: none;
+  border-radius: 2px;
+  height: 29px;
+  padding: 0 5px;
+  cursor: pointer;
+  font-size: 13px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px;
+}
+
+.button-icon {
+  width: 16px;
+  height: 16px;
+  filter: brightness(0) invert(1); /* Adjusts color to white */
+}
+
+.status-filters {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.status-label {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: #707070;
+}
+
+.status-label input {
+  margin-right: 5px;
+}

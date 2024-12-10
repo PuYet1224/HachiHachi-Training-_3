@@ -1,0 +1,108 @@
+<div id="Filterbar" class="">
+  <div class="left-t">
+    <div
+      [ngClass]="{ 'selected-border': isChecked(item) }"
+      *ngFor="let item of items; let i = index"
+    >
+      <a>{{ item }}</a>
+      <input
+        type="checkbox"
+        [checked]="isChecked(item)"
+        (change)="toggleStatus(item)"
+      />
+    </div>
+  </div>
+  <div class="right-t">
+    <div>
+      <img src="../../assets//upload (1).png" alt="" />
+    </div>
+    <div>
+      <img src="../../assets//download.png" alt="" />
+      <a>Template</a>
+    </div>
+    <div (click)="openAddNewForm()">
+      <img src="../../assets//plus.png" alt="" />
+      <a>THÊM MỚI</a>
+    </div>
+  </div>
+</div>
+<div *ngIf="isFormVisible" class="form-modal">
+  <div class="form-container">
+    <h3>
+      <i class="fa-solid fa-network-wired" style="color: #1a6634"></i> NGÂN HÀNG CÂU HỎI
+    </h3>
+    <form (ngSubmit)="addNewItem()">
+      <div>
+        <label for="question">Tên câu hỏi</label>
+        <input
+          id="question"
+          type="text"
+          [(ngModel)]="newItem.question"
+          name="question"
+        />
+      </div>
+      <div class="idcode-des">
+        <div>
+          <label for="idcode">Mã câu hỏi</label>
+          <input
+            disabled
+            id="idcode"
+            type="text"
+            [(ngModel)]="newItem.id"
+            name="idcode"
+          />
+        </div>
+        <div>
+          <label for="description">Phân nhóm</label>
+          <select
+            id="description"
+            [(ngModel)]="newItem.description"
+            name="description"
+          >
+            <option value="Thương hiệu">Thương hiệu</option>
+            <option value="Văn hóa công ty">Văn hóa công ty</option>
+            <option value="Quy định nội bộ">Quy định nội bộ</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label for="type-question">Loại câu hỏi</label>
+        <select>
+          <option value="-- Chọn --">-- Chọn --</option>
+          <option value="Nhiều lựa chọn">Nhiều lựa chọn</option>
+          <option value="Một lựa chọn">Một lựa chọn</option>
+          <option value="Câu hỏi yes/no">Câu hỏi yes/no</option>
+        </select>
+      </div>
+      <div>
+        <label for="point">Cách tính điểm</label>
+        <select>
+          <option value="-- Chọn --" selected>-- Chọn --</option>
+          <option value="Đúng hết đáp án">Đúng hết đáp án</option>
+          <option value="Từng đáp án đúng">Từng đáp án đúng</option>
+          <option value="Trừ đáp án sai">Trừ đáp án sai</option>
+        </select>
+      </div>
+      <div>
+        <label for="duration">Thời gian làm</label>
+        <input
+          id="duration"
+          type="text"
+          [(ngModel)]="newItem.duration"
+          name="duration"
+        />
+      </div>
+      <div>
+        <label for="status">Trạng thái</label>
+        <select id="status" [(ngModel)]="newItem.status" name="status">
+          <option value="Đang soạn thảo">Đang soạn thảo</option>
+          <option value="Gửi duyệt">Gửi duyệt</option>
+          <option value="Đã duyệt">Đã duyệt</option>
+          <option value="Ngừng áp dụng">Ngừng áp dụng</option>
+        </select>
+      </div>
+      <button type="button" (click)="closeForm()">Đóng</button>
+      <button type="submit">Thêm</button>
+    </form>
+  </div>
+</div>
