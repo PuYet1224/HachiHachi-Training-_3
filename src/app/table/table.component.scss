@@ -555,3 +555,10 @@ select option:checked {
 .returned-status {
   color: #b7b92f;
 }
+.no-data {
+  text-align: center;
+  font-style: italic;
+  color: #999;
+  height: 50px;
+}
+

@@ -80,8 +80,7 @@
     />
     <div
       class="action-menu"
-      *ngIf="activeActionMenuId === 'item-' + i + '-' + item.id"
-    >
+      *ngIf="activeActionMenuId === 'item-' + i + '-' + item.id">
               <ul>
                 <li *ngIf="item.status === 'Đang soạn thảo'" (click)="editItem(item)">
                   <img src="../../assets/pencil.png" alt="Edit" /> Chỉnh sửa
@@ -128,6 +127,11 @@
                 </li>
               </ul>
             </div>            
+          </td>
+        </tr>
+        <tr *ngIf="pagedData.length === 0">
+          <td colspan="6" class="no-data">
+            Không có dữ liệu hiển thị
           </td>
         </tr>
       </tbody>

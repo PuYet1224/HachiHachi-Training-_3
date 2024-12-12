@@ -44,7 +44,12 @@ export class FilterBarComponent implements OnInit, OnDestroy {
         this.isDisabled = isVisible;
       })
     );
-  }  
+  
+    this.filterService.reset$.subscribe(() => {
+      this.resetFilters();
+    });
+  }
+  
 
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
