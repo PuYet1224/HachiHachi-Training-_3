@@ -1,7 +1,12 @@
-<div class="custom-pagination">
+<!-- footer.component.html -->
+<div class="custom-pagination" [class.disabled]="disabled">
   <div class="left-c">
     <span>Hiển thị mỗi trang</span>
-    <select [value]="rowsPerPage" (change)="onItemsPerPageChangeSelect($event)">
+    <select 
+      [value]="rowsPerPage" 
+      (change)="onItemsPerPageChangeSelect($event)" 
+      [disabled]="disabled"
+    >
       <option *ngFor="let size of [25, 50, 75, 100]" [value]="size">
         {{ size }}
       </option>
@@ -10,14 +15,14 @@
   <div class="right-c">
     <button 
       (click)="handleFirst()" 
-      [disabled]="currentPage === 1"
+      [disabled]="currentPage === 1 || disabled"
       class="arrow-button first-last-button"
     >
       Đầu
     </button>
     <button 
       (click)="handlePrev()" 
-      [disabled]="currentPage === 1"
+      [disabled]="currentPage === 1 || disabled"
       class="arrow-button"
     >
       <img [src]="left_arrow" alt="Trang Trước" />
@@ -29,6 +34,7 @@
         (click)="goToPage(page)"
         class="page-button"
         [class.active]="isActivePage(page)"
+        [disabled]="disabled"
       >
         {{ page }}
       </button>
@@ -37,6 +43,7 @@
         *ngIf="isLeftEllipsis(page)"
         (click)="handleEllipsis('left')"
         class="ellipsis-button"
+        [disabled]="disabled"
       >
         ...
       </button>
@@ -45,6 +52,7 @@
         *ngIf="isRightEllipsis(page)"
         (click)="handleEllipsis('right')"
         class="ellipsis-button"
+        [disabled]="disabled"
       >
         ...
       </button>
@@ -52,14 +60,14 @@
 
     <button 
       (click)="handleNext()" 
-      [disabled]="currentPage === totalPages" 
+      [disabled]="currentPage === totalPages || disabled" 
       class="arrow-button"
     >
       <img [src]="right_arrow" alt="Trang Tiếp Theo" />
     </button>
     <button 
       (click)="handleLast()" 
-      [disabled]="currentPage === totalPages" 
+      [disabled]="currentPage === totalPages || disabled" 
       class="arrow-button first-last-button"
     >
       Cuối

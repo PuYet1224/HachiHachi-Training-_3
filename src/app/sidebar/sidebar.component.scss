@@ -96,7 +96,7 @@
   align-items: center;
   list-style: none;
   color: #fff;
-  background: #1a2334;
+  background: #5a6276;
   cursor: pointer;
 
   div {
@@ -113,9 +113,12 @@
   }
 
   &.selected {
-    background: #000000; 
+    background: #1a2334; 
     div {
       background: #FFFFFF; 
     }
   }
+}
+.empty-sidebar {
+  background-color: white;
 }

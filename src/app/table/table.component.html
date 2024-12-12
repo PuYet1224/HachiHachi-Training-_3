@@ -51,46 +51,49 @@
       </thead>
       <tbody>
         <tr
-          *ngFor="let item of pagedData"
-          [ngClass]="{ 'selected-row': isSelected(item) }"
-        >
-          <td>
-            <input
-              type="checkbox"
-              [checked]="isSelected(item)"
-              (change)="toggleSelectItem(item)"
-            />
-          </td>
-          <td>
-            <p class="question">{{ item.question }}</p>
-            <p class="details">
-              {{ item.id }} | Loại câu hỏi: {{ item.type || "" }}
-            </p>
-          </td>
-          <td>{{ item.description }}</td>
-          <td>{{ item.duration }}</td>
-          <td [ngClass]="item.status | statusColor">{{ item.status }}</td>
-          <td class="action-cell">
-            <img
-              src="../../assets/option.png"
-              alt="Options"
-              class="actions"
-              (click)="canShowActionMenu(item) ? toggleActionMenu(item.id) : null"
-              [class.disabled]="isDisabled"
-            />
-            <div class="action-menu" *ngIf="activeActionMenuId === item.id">
+  *ngFor="let item of pagedData; let i = index"
+  [ngClass]="{ 'selected-row': isSelected(item) }"
+>
+  <td>
+    <input
+      type="checkbox"
+      [checked]="isSelected(item)"
+      (change)="toggleSelectItem(item)"
+    />
+  </td>
+  <td>
+    <p class="question">{{ item.question }}</p>
+    <p class="details">
+      {{ item.id }} | Loại câu hỏi: {{ item.type || "" }}
+    </p>
+  </td>
+  <td>{{ item.description }}</td>
+  <td>{{ item.duration }}</td>
+  <td [ngClass]="item.status | statusColor">{{ item.status }}</td>
+  <td class="action-cell">
+    <img
+      src="../../assets/option.png"
+      alt="Options"
+      class="actions"
+      (click)="toggleActionMenu('item-' + i + '-' + item.id)"
+      [class.disabled]="isDisabled"
+    />
+    <div
+      class="action-menu"
+      *ngIf="activeActionMenuId === 'item-' + i + '-' + item.id"
+    >
               <ul>
-                <li *ngIf="item.status === 'Đang soạn thảo'" (click)="editItem(item.id)">
+                <li *ngIf="item.status === 'Đang soạn thảo'" (click)="editItem(item)">
                   <img src="../../assets/pencil.png" alt="Edit" /> Chỉnh sửa
                 </li>
                 <li *ngIf="item.status === 'Đang soạn thảo'" (click)="submitForApprovalFromMenu(item)">
                   <img src="../../assets/share.png" alt="Submit" /> Gửi duyệt
                 </li>
-                <li *ngIf="item.status === 'Đang soạn thảo'" (click)="deleteItem(item.id)">
+                <li *ngIf="item.status === 'Đang soạn thảo'" (click)="deleteItem(item)">
                   <img src="../../assets/delete.png" alt="Delete" /> Xóa câu hỏi
                 </li>
             
-                <li *ngIf="item.status === 'Gửi duyệt'" (click)="editItem(item.id)">
+                <li *ngIf="item.status === 'Gửi duyệt'" (click)="editItem(item)">
                   <img src="../../assets/pencil.png" alt="Edit" /> Chỉnh sửa
                 </li>
                 <li *ngIf="item.status === 'Gửi duyệt'" (click)="approveFromMenu(item)">
@@ -117,7 +120,7 @@
                   <img src="../../assets/turn-back.png" alt="Return" /> Trả về
                 </li>
             
-                <li *ngIf="item.status === 'Trả về'" (click)="editItem(item.id)">
+                <li *ngIf="item.status === 'Trả về'" (click)="editItem(item)">
                   <img src="../../assets/pencil.png" alt="Edit" /> Chỉnh sửa
                 </li>
                 <li *ngIf="item.status === 'Trả về'" (click)="submitForApprovalFromMenu(item)">
@@ -151,7 +154,7 @@
     <span>Bạn chắc chắn muốn xóa các mục đã chọn?</span>
     <span
       class="content-text"
-      title="Hệ thống của hàng Hachi Hachi có mặt từ năm nào?"
+      [title]="selectedItemsTitle"
     >
       Hệ thống của hàng Hachi Hachi có mặt từ năm nào?
     </span>
@@ -239,7 +242,7 @@
             required
             [disabled]="isViewOnlyMode || (!isCreateMode && !isEditMode) || !editableItem.description"
           >
-            <option value="">-- Chọn loại câu hỏi --</option>
+            <option value="">-- Chọn --</option>
             <option value="Nhiều lựa chọn">Nhiều lựa chọn</option>
             <option value="Dạng câu một lựa chọn">Một lựa chọn</option>
             <option value="Câu hỏi yes/no">Câu hỏi yes/no</option>
@@ -257,7 +260,7 @@
             required
             [disabled]="isViewOnlyMode || (!isCreateMode && !isEditMode) || editableItem.type !== 'Nhiều lựa chọn'"
           >
-            <option value="">-- Chọn cách tính điểm --</option>
+            <option value="">-- Chọn --</option>
             <option value="Đúng hết đáp án">Đúng hết đáp án</option>
             <option value="Từng đáp án đúng">Từng đáp án đúng</option>
             <option value="Trừ đáp án sai">Trừ đáp án sai</option>
@@ -289,7 +292,7 @@
             required
             [disabled]="isViewOnlyMode || (!isCreateMode && !isEditMode)"
           >
-            <option value="">-- Chọn trạng thái --</option>
+            <option value="">-- Chọn --</option>
             <option value="Đang soạn thảo">Đang soạn thảo</option>
             <option value="Gửi duyệt">Gửi duyệt</option>
             <option value="Đã duyệt">Đã duyệt</option>
@@ -311,6 +314,7 @@
 
   <!-- Footer -->
   <app-footer
+    [disabled]="isDisabled"
     [rowsPerPage]="itemsPerPage"
     [rowCount]="filterData.length"
     [currentPage]="currentPage"

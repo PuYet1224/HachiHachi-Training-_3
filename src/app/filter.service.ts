@@ -1,3 +1,4 @@
+// filter.service.ts
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 
@@ -5,13 +6,13 @@ import { BehaviorSubject, Subject } from 'rxjs';
   providedIn: 'root',
 })
 export class FilterService {
-  private selectedStatues = new BehaviorSubject<string[]>([
+  private selectedStatuses = new BehaviorSubject<string[]>([
     'Đang soạn thảo',
     'Gửi duyệt',
     'Đã duyệt',
     'Ngừng áp dụng'
   ]);
-  selectedStatues$ = this.selectedStatues.asObservable();
+  selectedStatuses$ = this.selectedStatuses.asObservable();
 
   private searchText = new BehaviorSubject<string>('');
   searchText$ = this.searchText.asObservable();
@@ -19,8 +20,8 @@ export class FilterService {
   private resetSubject = new Subject<void>();
   reset$ = this.resetSubject.asObservable();
 
-  updateSelectedStatues(statues: string[]) {
-    this.selectedStatues.next(statues);
+  updateSelectedStatuses(statuses: string[]) { 
+    this.selectedStatuses.next(statuses);
   }
 
   updateSearchText(text: string) {
@@ -28,6 +29,8 @@ export class FilterService {
   }
 
   resetAll() {
+    this.selectedStatuses.next([]);
+    this.searchText.next('');
     this.resetSubject.next();
   }
 

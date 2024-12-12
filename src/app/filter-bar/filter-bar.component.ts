@@ -3,6 +3,7 @@ import { FilterService } from '../filter.service';
 import { TabledataService } from '../tabledata.service';
 import { UiStateService } from '../ui-state.service'; 
 import { Subscription } from 'rxjs';
+import { QuestionDTO } from '../question.dto';
 
 @Component({
   selector: 'app-filter-bar',
@@ -14,7 +15,7 @@ export class FilterBarComponent implements OnInit, OnDestroy {
   public selectedStatuses: string[] = ['Đang soạn thảo'];
   public isFormVisible: boolean = false;
 
-  public newItem = {
+  public newItem: Partial<QuestionDTO> = {
     id: '',
     question: '',
     description: 'Thương hiệu',
@@ -24,7 +25,8 @@ export class FilterBarComponent implements OnInit, OnDestroy {
     point: '', 
   };
 
-  public isDisabled: boolean = false; 
+  public isDisabled: boolean = false;
+  public notification: { message: string; type: string } | null = null;
 
   private subscriptions: Subscription = new Subscription();
 
@@ -33,20 +35,16 @@ export class FilterBarComponent implements OnInit, OnDestroy {
     private tableDataService: TabledataService,
     private uiStateService: UiStateService 
   ) {
-    this.filterService.updateSelectedStatues(this.selectedStatuses);
+    this.filterService.updateSelectedStatuses(this.selectedStatuses);
   }
 
   ngOnInit() {
-    this.filterService.reset$.subscribe(() => {
-      this.resetFilters();
-    });
-
     this.subscriptions.add(
       this.uiStateService.actionBarVisibility$.subscribe((isVisible) => {
         this.isDisabled = isVisible;
       })
     );
-  }
+  }  
 
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
@@ -58,7 +56,7 @@ export class FilterBarComponent implements OnInit, OnDestroy {
     } else {
       this.selectedStatuses.push(status);
     }
-    this.filterService.updateSelectedStatues(this.selectedStatuses);
+    this.filterService.updateSelectedStatuses(this.selectedStatuses); 
   }
 
   isChecked(status: string): boolean {
@@ -67,7 +65,7 @@ export class FilterBarComponent implements OnInit, OnDestroy {
 
   resetFilters() {
     this.selectedStatuses = ['Đang soạn thảo'];
-    this.filterService.updateSelectedStatues(this.selectedStatuses);
+    this.filterService.updateSelectedStatuses(this.selectedStatuses);
   }
 
   openAddNewForm() {
@@ -87,10 +85,12 @@ export class FilterBarComponent implements OnInit, OnDestroy {
       .reduce((max, item) => Math.max(max, parseInt(item.id.replace('Q', ''))), 0);
     const id = `Q${maxId + 1}`;
     this.newItem.id = id;
-    this.tableDataService.addItem({ ...this.newItem }); 
+    this.tableDataService.addItem({ ...this.newItem } as QuestionDTO);
+    this.showNotification('Thêm câu hỏi thành công!', 'success');
     this.isFormVisible = false;
     this.resetForm();
   }
+  
 
   public resetForm() {
     this.newItem = {
@@ -102,5 +102,12 @@ export class FilterBarComponent implements OnInit, OnDestroy {
       type: 'Dạng câu một lựa chọn',
       point: '',
     };
+  }
+
+  showNotification(message: string, type: string) {
+    this.notification = { message, type };
+    setTimeout(() => {
+      this.notification = null;
+    }, 3500); 
   }
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FilterService } from '../filter.service';
-import { UiStateService } from '../ui-state.service'; 
+import { UiStateService } from '../ui-state.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -10,12 +10,12 @@ import { Subscription } from 'rxjs';
 })
 export class SearchBarComponent implements OnInit, OnDestroy {
   searchText: string = '';
-  isDisabled: boolean = false; 
+  isDisabled: boolean = false;
   private subscriptions: Subscription = new Subscription();
 
   constructor(
     private filterService: FilterService,
-    private uiStateService: UiStateService 
+    private uiStateService: UiStateService
   ) {}
 
   ngOnInit() {
@@ -24,28 +24,29 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         this.isDisabled = isVisible;
       })
     );
-  }
+  }  
 
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
   }
 
   search() {
-    if (!this.isDisabled) { 
+    if (!this.isDisabled) {
+      this.searchText = this.searchText.trim();
       this.filterService.updateSearchText(this.searchText);
     }
   }
 
   resetSearch() {
-    if (!this.isDisabled) { 
-      this.searchText = '';
-      this.filterService.updateSearchText(this.searchText);
+    if (!this.isDisabled) {
       this.filterService.resetAll();
+      this.searchText = '';
     }
   }
 
   searchOnEnter(event: KeyboardEvent) {
-    if (event.key === 'Enter' && !this.isDisabled) { 
+    if (event.key === 'Enter' && !this.isDisabled) {
+      this.searchText = this.searchText.trim();
       this.filterService.updateSearchText(this.searchText);
     }
   }

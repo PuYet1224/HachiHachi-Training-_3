@@ -1,7 +1,7 @@
 <app-sidebar></app-sidebar>
 <div>
   <app-headerwide></app-headerwide>
-  <app-filter-bar></app-filter-bar>
-  <app-search-bar></app-search-bar>
-  <app-table></app-table>
+  <app-filter-bar *ngIf="showFilterBar"></app-filter-bar>
+  <app-search-bar *ngIf="showSearchBar"></app-search-bar>
+  <app-table *ngIf="showTable"></app-table>
 </div>

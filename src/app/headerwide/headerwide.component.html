@@ -1,18 +1,60 @@
 <div id="HeaderWide">
   <div class="left-h">
-    <div class="hyphen-line">------------</div>
+    <div 
+      class="hyphen-line" 
+      (click)="onHyphenLineClick(1)" 
+      [ngClass]="{'active': isHyphenActive(1)}"
+    >
+      ------------
+    </div>
     <span class="vertical-line">|</span>
-    <div class="hyphen-line">------------</div>
+    <div 
+      class="hyphen-line" 
+      (click)="onHyphenLineClick(2)" 
+      [ngClass]="{'active': isHyphenActive(2)}"
+    >
+      ------------
+    </div>
     <span class="vertical-line">|</span>
-    <div class="hyphen-line">------------</div>
+    <div 
+      class="hyphen-line" 
+      (click)="onHyphenLineClick(3)" 
+      [ngClass]="{'active': isHyphenActive(3)}"
+    >
+      ------------
+    </div>
     <span class="vertical-line">|</span>
-    <div class="hyphen-line">------------</div>
+    <div 
+      class="hyphen-line" 
+      (click)="onHyphenLineClick(4)" 
+      [ngClass]="{'active': isHyphenActive(4)}"
+    >
+      ------------
+    </div>
     <span class="vertical-line">|</span>
-    <div class="hyphen-line">------------</div>
+    <div 
+      class="hyphen-line" 
+      (click)="onHyphenLineClick(5)" 
+      [ngClass]="{'active': isHyphenActive(5)}"
+    >
+      ------------
+    </div>
     <span class="vertical-line">|</span>
-    <div class="hyphen-line">------------</div>
+    <div 
+      class="hyphen-line" 
+      (click)="onHyphenLineClick(6)" 
+      [ngClass]="{'active': isHyphenActive(6)}"
+    >
+      ------------
+    </div>
     <span class="vertical-line">|</span>
-    <a class="ns">NHÂN SỰ</a>
+    <a 
+      class="ns" 
+      (click)="onNhanSuClick()" 
+      [ngClass]="{'active': isNhanSuActive()}"
+    >
+      NHÂN SỰ
+    </a>
   </div>
   <div class="right-h">
     <div>

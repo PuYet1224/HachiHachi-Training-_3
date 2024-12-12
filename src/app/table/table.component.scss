@@ -52,8 +52,9 @@ table thead tr th {
   color: #5a6276;
 }
 table thead tr th:nth-of-type(1) {
+  table tbody tr td:nth-of-type(1) {
   text-align: center;
-}
+}}
 table thead tr th:nth-of-type(3) {
   text-align: left;
 }
@@ -80,13 +81,11 @@ tbody tr:hover {
   font-weight: bold;
 }
 
-/* Giữ nguyên text-overflow và align cho các cột */
 tbody tr td:nth-of-type(2) {
   border-collapse: separate;
   text-overflow: ellipsis;
 }
 
-/* Từ snippet 2: canh giữa và thêm border-left cho cột cuối */
 tbody tr td:last-child {
   border-left: 1px solid #bdc2d2;
   text-align: center;
@@ -170,11 +169,10 @@ input[type="checkbox"]:checked::before {
   position: relative;
 }
 
-/* Điều chỉnh action-menu theo snippet thứ 2 (top:16px, right:30px) */
 .action-menu {
   position: absolute;
   top: 16px;
-  right: 30px;
+  right: 50px;
   background: #bdc2d2;
   z-index: 100;
   border-radius: 4px;
@@ -188,7 +186,7 @@ input[type="checkbox"]:checked::before {
 }
 
 .action-menu li {
-  padding: 4px 6px; /* từ snippet 2 */
+  padding: 4px 6px; 
   display: flex;
   align-items: center;
   gap: 8px;

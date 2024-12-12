@@ -9,6 +9,7 @@ export class FooterComponent implements OnChanges {
   @Input() rowsPerPage: number = 25;
   @Input() rowCount: number = 0;
   @Input() currentPage: number = 1; 
+  @Input() disabled: boolean = false; 
 
   @Output() pageChange = new EventEmitter<number>();
   @Output() itemsPerPageChange = new EventEmitter<number>();

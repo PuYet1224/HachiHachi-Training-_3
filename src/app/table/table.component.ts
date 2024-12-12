@@ -1,9 +1,11 @@
+// table.component.ts
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { TabledataService } from '../tabledata.service';
 import { FilterService } from '../filter.service';
 import { Subscription } from 'rxjs';
 import { UiStateService } from '../ui-state.service'; 
 import { MatSidenav } from '@angular/material/sidenav';
+import { QuestionDTO } from '../question.dto';
 
 @Component({
   selector: 'app-table',
@@ -11,10 +13,9 @@ import { MatSidenav } from '@angular/material/sidenav';
   styleUrls: ['./table.component.scss'],
 })
 export class TableComponent implements OnInit, OnDestroy {
-  data: any[] = [];
-  // listSelected: TabledataService[] = [];
-  filterData: any[] = [];
-  pagedData: any[] = [];
+  data: QuestionDTO[] = []; // Sử dụng QuestionDTO
+  filterData: QuestionDTO[] = [];
+  pagedData: QuestionDTO[] = [];
 
   itemsPerPage = 25;
   currentPage = 1;
@@ -22,7 +23,7 @@ export class TableComponent implements OnInit, OnDestroy {
   activeActionMenuId: string | null = null;
   isDisabled: boolean = false;
 
-  selectedItems: any[] = [];
+  selectedItems: QuestionDTO[] = []; 
   allSelected: boolean = false;
   visibleButtons: any = {};
   notification: { message: string; type: string } | null = null;
@@ -44,7 +45,7 @@ export class TableComponent implements OnInit, OnDestroy {
   submitted: boolean = false; 
   isFormVisible: boolean = false;
 
-  editableItem: any = {
+  editableItem: Partial<QuestionDTO> = { // Sử dụng Partial<QuestionDTO>
     question: '',
     id: '',
     description: '',
@@ -62,32 +63,42 @@ export class TableComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.data = this.dataService.getData();
-    this.filterData = [...this.data];
-    this.updateDisplayedData();
-
+    this.subscriptions.add(
+      this.dataService.data$.subscribe((data: QuestionDTO[]) => {
+        this.data = data;
+        this.applyFilters();
+      })
+    );
+  
     this.subscriptions.add(
       this.filterService.searchText$.subscribe((text) => {
         this.currentSearchText = text;
         this.applyFilters();
       })
     );
-
+  
     this.subscriptions.add(
-      this.filterService.selectedStatues$.subscribe((statuses: string[]) => {
+      this.filterService.selectedStatuses$.subscribe((statuses: string[]) => {
         this.currentSelectedStatuses = statuses;
         this.applyFilters();
       })
     );
-
+  
+    this.subscriptions.add(
+      this.filterService.reset$.subscribe(() => {
+        this.resetFilters(); // Reset các bộ lọc
+      })
+    );
+  
     this.subscriptions.add(
       this.uiStateService.actionBarVisibility$.subscribe((isVisible) => {
         this.isDisabled = isVisible;
       })
     );
-
+  
     this.updateVisibleButtons();
   }
+  
 
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
@@ -97,20 +108,39 @@ export class TableComponent implements OnInit, OnDestroy {
     return this.selectedItems.length > 0;
   }
 
-  updateDisplayedData() {
+  updateDisplayedData(): void {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
     this.pagedData = this.filterData.slice(startIndex, endIndex);
+    if (this.pagedData.length === 0 && this.currentPage > 1) {
+      this.currentPage--;
+      this.updateDisplayedData();
+    }
   }
+  
 
   applyFilters() {
-    this.filterData = [...this.data];
-    this.applyStatusFilter(this.currentSelectedStatuses);
-    this.applySearchFilter(this.currentSearchText);
-    this.currentPage = 1;
+    this.filterData = [...this.data]; 
+    this.applyStatusFilter(this.currentSelectedStatuses); 
+    this.applySearchFilter(this.currentSearchText); 
+    const totalPages = Math.ceil(this.filterData.length / this.itemsPerPage);
+    this.currentPage = Math.min(this.currentPage, totalPages) || 1;    
     this.updateDisplayedData();
+    if (this.selectedItems.length === 0) {
+      this.uiStateService.setActionBarVisibility(false);
+      this.isDisabled = false;
+    }
   }
-
+  
+  resetFilters() {
+    this.currentSearchText = ''; 
+    this.currentSelectedStatuses = ['Đang soạn thảo', 'Trả về']; 
+    this.filterData = [...this.data];
+    this.currentPage = 1; 
+    this.updateDisplayedData(); 
+    this.applyFilters();
+  }
+  
   onItemsPerPageChange(itemsPerPage: number) {
     this.itemsPerPage = itemsPerPage;
     this.currentPage = 1;
@@ -152,9 +182,11 @@ export class TableComponent implements OnInit, OnDestroy {
     this.allSelected = event.target.checked;
     this.selectedItems = this.allSelected ? [...this.pagedData] : [];
     this.updateVisibleButtons();
+    this.uiStateService.setActionBarVisibility(this.selectedItems.length > 0);
   }
+  
 
-  toggleSelectItem(item: any) {
+  toggleSelectItem(item: QuestionDTO): void {
     const index = this.selectedItems.findIndex((i) => i.id === item.id);
     if (index > -1) {
       this.selectedItems.splice(index, 1);
@@ -163,7 +195,11 @@ export class TableComponent implements OnInit, OnDestroy {
     }
     this.allSelected = this.selectedItems.length === this.pagedData.length;
     this.updateVisibleButtons();
+    this.isDisabled = this.selectedItems.length > 0;
+    this.uiStateService.setActionBarVisibility(this.selectedItems.length > 0);
   }
+  
+  
 
   updateVisibleButtons() {
     const statuses = this.selectedItems.map((item) => item.status);
@@ -196,9 +232,9 @@ export class TableComponent implements OnInit, OnDestroy {
     this.uiStateService.setActionBarVisibility(isVisible);
   }
 
-  isSelected(item: any): boolean {
-    return this.selectedItems.some((i) => i.id === item.id);
-  }
+  isSelected(item: QuestionDTO): boolean {
+    return this.selectedItems.some((selectedItem) => selectedItem.uniqueId === item.uniqueId);
+  }  
 
   checkAndOpenDeleteModal() {
     if (this.selectedItems.length >= 2) {
@@ -210,17 +246,22 @@ export class TableComponent implements OnInit, OnDestroy {
     }
   }
 
-  confirmDelete() {
-    this.data = this.data.filter(
-      (item) => !this.selectedItems.some((selected) => selected.id === item.id)
-    );
+  confirmDelete(): void {
+    const uniqueIds = this.selectedItems.map(item => item.uniqueId).filter(Boolean) as string[];
+    if (uniqueIds.length === 0) {
+      this.showNotification('Không có mục nào để xóa!', 'error');
+      return;
+    }
+    this.dataService.deleteItems(uniqueIds);
     this.selectedItems = [];
     this.allSelected = false;
     this.isDeleteModalVisible = false;
-    this.showNotification('Đã xóa các mục thành công!', 'success');
-
+    this.showNotification(`Đã xóa ${uniqueIds.length} mục thành công!`, 'success');
     this.applyFilters();
+    this.updateVisibleButtons();
+    this.uiStateService.setActionBarVisibility(false); 
   }
+  
 
   closeDeleteModal() {
     this.isDeleteModalVisible = false;
@@ -229,8 +270,10 @@ export class TableComponent implements OnInit, OnDestroy {
   closePopup() {
     this.selectedItems = [];
     this.allSelected = false;
+    this.uiStateService.setActionBarVisibility(false); 
     this.updateVisibleButtons();
   }
+  
 
   getClassStatus(status: string): string {
     switch (status) {
@@ -256,7 +299,7 @@ export class TableComponent implements OnInit, OnDestroy {
           {
             label: 'Chỉnh sửa',
             icon: '../../assets/pencil.png',
-            handler: (item: any) => this.openFormDrawer(item, 'edit')
+            handler: (item: QuestionDTO) => this.openFormDrawer(item, 'edit')
           },
           {
             label: 'Gửi duyệt',
@@ -274,7 +317,7 @@ export class TableComponent implements OnInit, OnDestroy {
           {
             label: 'Chỉnh sửa',
             icon: '../../assets/pencil.png',
-            handler: (item: any) => this.openFormDrawer(item, 'edit')
+            handler: (item: QuestionDTO) => this.openFormDrawer(item, 'edit')
           },
           {
             label: 'Phê duyệt',
@@ -292,7 +335,7 @@ export class TableComponent implements OnInit, OnDestroy {
           {
             label: 'Xem chi tiết',
             icon: '../../assets/view.png',
-            handler: (item: any) => this.openFormDrawer(item, 'view')
+            handler: (item: QuestionDTO) => this.openFormDrawer(item, 'view')
           },
           {
             label: 'Ngừng áp dụng',
@@ -305,7 +348,7 @@ export class TableComponent implements OnInit, OnDestroy {
           {
             label: 'Xem chi tiết',
             icon: '../../assets/view.png',
-            handler: (item: any) => this.openFormDrawer(item, 'view')
+            handler: (item: QuestionDTO) => this.openFormDrawer(item, 'view')
           },
           {
             label: 'Phê duyệt',
@@ -323,7 +366,7 @@ export class TableComponent implements OnInit, OnDestroy {
           {
             label: 'Chỉnh sửa',
             icon: '../../assets/pencil.png',
-            handler: (item: any) => this.openFormDrawer(item, 'edit')
+            handler: (item: QuestionDTO) => this.openFormDrawer(item, 'edit')
           },
           {
             label: 'Gửi duyệt',
@@ -336,20 +379,20 @@ export class TableComponent implements OnInit, OnDestroy {
     }
   }
 
-  toggleActionMenu(id: string) {
-    if (this.activeActionMenuId === id) {
+  toggleActionMenu(uniqueKey: string) {
+    if (this.activeActionMenuId === uniqueKey) {
       this.activeActionMenuId = null;
       this.currentActions = [];
     } else {
-      this.activeActionMenuId = id;
-      const item = this.data.find((i) => i.id === id);
+      this.activeActionMenuId = uniqueKey;
+      const item = this.pagedData.find((_, index) => `item-${index}` === uniqueKey);
       if (item) {
         this.currentActions = this.getActionsForStatus(item.status);
       } else {
         this.currentActions = [];
       }
     }
-  }
+  }  
 
   showNotification(message: string, type: string) {
     this.notification = { message, type };
@@ -360,197 +403,175 @@ export class TableComponent implements OnInit, OnDestroy {
 
   submitForApproval() {
     const eligibleItems = this.selectedItems.filter((item) =>
-      ['Đang soạn thảo', 'Trả về'].includes(item.status)
+        ['Đang soạn thảo', 'Trả về'].includes(item.status)
     );
-    if (eligibleItems.length === this.selectedItems.length) {
-      eligibleItems.forEach((item) => {
+    eligibleItems.forEach((item) => {
         item.status = 'Gửi duyệt';
-      });
-      this.showNotification('Gửi duyệt thành công!', 'success');
-      this.selectedItems = [];
-      this.updateVisibleButtons();
-      this.applyFilters();
+        this.dataService.updateItem(item); 
+    });
+    if (eligibleItems.length > 0) {
+        this.showNotification(`Đã gửi duyệt ${eligibleItems.length} mục thành công!`, 'success');
     } else {
-      this.showNotification('Không thể gửi duyệt các mục đã chọn.', 'error');
+        this.showNotification('Không có mục nào hợp lệ để gửi duyệt.', 'error');
     }
-  }
+    this.updateVisibleButtons();
+    this.applyFilters();
+}
 
-  approveItems() {
-    const eligibleItems = this.selectedItems.filter((item) =>
+approveItems() {
+  const eligibleItems = this.selectedItems.filter((item) =>
       ['Gửi duyệt', 'Ngừng áp dụng'].includes(item.status)
-    );
-    if (eligibleItems.length === this.selectedItems.length) {
-      eligibleItems.forEach((item) => {
-        item.status = 'Duyệt áp dụng';
-      });
-      this.showNotification('Phê duyệt thành công!', 'success');
-      this.selectedItems = [];
-      this.updateVisibleButtons();
-      this.applyFilters();
-    } else {
-      this.showNotification('Không thể phê duyệt các mục đã chọn.', 'error');
-    }
+  );
+  eligibleItems.forEach((item) => {
+      item.status = 'Duyệt áp dụng';
+      this.dataService.updateItem(item);
+  });
+  if (eligibleItems.length > 0) {
+      this.showNotification(`Đã phê duyệt ${eligibleItems.length} mục thành công!`, 'success');
+  } else {
+      this.showNotification('Không có mục nào hợp lệ để phê duyệt.', 'error');
   }
+  this.updateVisibleButtons();
+  this.applyFilters();
+}
 
-  deactivateItems() {
-    const eligibleItems = this.selectedItems.filter(
+deactivateItems() {
+  const eligibleItems = this.selectedItems.filter(
       (item) => item.status === 'Duyệt áp dụng'
-    );
-    if (eligibleItems.length === this.selectedItems.length) {
-      eligibleItems.forEach((item) => {
-        item.status = 'Ngừng áp dụng';
-      });
-      this.showNotification('Ngưng áp dụng thành công!', 'success');
-      this.selectedItems = [];
-      this.updateVisibleButtons();
-      this.applyFilters();
-    } else {
-      this.showNotification(
-        'Không thể ngưng áp dụng các mục đã chọn.',
-        'error'
-      );
-    }
+  );
+  eligibleItems.forEach((item) => {
+      item.status = 'Ngừng áp dụng';
+      this.dataService.updateItem(item); 
+  });
+  if (eligibleItems.length > 0) {
+      this.showNotification(`Đã ngừng áp dụng ${eligibleItems.length} mục thành công!`, 'success');
+  } else {
+      this.showNotification('Không có mục nào hợp lệ để ngừng áp dụng.', 'error');
   }
+  this.updateVisibleButtons();
+  this.applyFilters();
+}
 
-  returnItems() {
-    const eligibleItems = this.selectedItems.filter((item) =>
+returnItems() {
+  const eligibleItems = this.selectedItems.filter((item) =>
       ['Gửi duyệt', 'Ngừng áp dụng'].includes(item.status)
-    );
-    if (eligibleItems.length === this.selectedItems.length) {
-      eligibleItems.forEach((item) => {
-        item.status = 'Trả về';
-      });
-      this.showNotification('Trả về thành công!', 'success');
-      this.selectedItems = [];
-      this.updateVisibleButtons();
-      this.applyFilters();
-    } else {
-      this.showNotification('Không thể trả về các mục đã chọn.', 'error');
-    }
+  );
+  eligibleItems.forEach((item) => {
+      item.status = 'Trả về';
+      this.dataService.updateItem(item); 
+  });
+  if (eligibleItems.length > 0) {
+      this.showNotification(`Đã trả về ${eligibleItems.length} mục thành công!`, 'success');
+  } else {
+      this.showNotification('Không có mục nào hợp lệ để trả về.', 'error');
+  }
+  this.updateVisibleButtons();
+  this.applyFilters();
+}
+
+deleteItem(itemOrId: string | QuestionDTO): void {
+  const uniqueId = typeof itemOrId === 'string' ? itemOrId : itemOrId.uniqueId;
+  if (!uniqueId) {
+    this.showNotification(`Không tìm thấy mục để xóa!`, 'error');
+    return;
+  }
+  this.dataService.deleteItem(uniqueId);
+  this.selectedItems = this.selectedItems.filter(item => item.uniqueId !== uniqueId);
+  this.updateVisibleButtons();
+  this.uiStateService.setActionBarVisibility(this.selectedItems.length > 0);
+  this.isDisabled = this.selectedItems.length > 0;
+  this.showNotification(`Đã xóa thành công!`, 'success');
+  this.applyFilters();
+}
+
+
+
+deleteSelectedItems(): void {
+  if (this.selectedItems.length === 0) {
+    this.showNotification('Vui lòng chọn ít nhất 1 mục để xóa!', 'error');
+    return;
   }
 
-  deleteItem(itemOrId: any) {
-    let item: { id: string; type?: string };
-        if (typeof itemOrId === 'string') {
-      item = this.data.find(i => i.id === itemOrId);
-    } else {
-      item = itemOrId;
-    }
+  const uniqueIds = this.selectedItems.map(item => item.uniqueId).filter(Boolean) as string[];
 
-    if (!item || !item.id) {
-      this.showNotification(`Không tìm thấy câu hỏi để xóa!`, 'error');
-      this.closeActionMenu();
-      return;
-    }
+  this.dataService.deleteItems(uniqueIds);
 
-    if (!item.type) {
-      this.showNotification(
-        `Không thể xóa câu hỏi ${item.id} vì thiếu thông tin loại câu hỏi!`,
-        'error'
-      );
-      this.closeActionMenu();
-      return;
-    }
-    this.data = this.data.filter((i) => i.id !== item.id);
-    this.selectedItems = this.selectedItems.filter((i) => i.id !== item.id);
-    this.showNotification(`Đã xóa câu hỏi ${item.id} thành công!`, 'success');
-    this.closeActionMenu();
-    this.updateVisibleButtons();
-    this.applyFilters();
-  }
+  this.selectedItems = [];
+  this.allSelected = false;
 
-  deleteSelectedItems() {
-    const invalidItems = this.selectedItems.filter((item) => !item.type);
-    if (invalidItems.length > 0) {
-      this.showNotification(
-        `Không thể xóa ${invalidItems.length} mục vì thiếu thông tin loại câu hỏi!`,
-        'error'
-      );
-      return;
-    }
+  this.showNotification(`Đã xóa ${uniqueIds.length} mục thành công!`, 'success');
 
-    this.data = this.data.filter(
-      (item) => !this.selectedItems.some((selected) => selected.id === item.id)
-    );
-
-    this.selectedItems = [];
-    this.allSelected = false;
-    this.showNotification('Đã xóa các câu hỏi thành công!', 'success');
-    this.closeActionMenu();
-    this.updateVisibleButtons();
-    this.applyFilters();
-  }
+  this.applyFilters();
+}
 
   closeActionMenu() {
     this.activeActionMenuId = null;
     this.currentActions = [];
   }
 
-  submitForApprovalFromMenu(item: any) {
-    if (['Đang soạn thảo', 'Trả về'].includes(item.status)) {
+  submitForApprovalFromMenu(itemOrId: string | QuestionDTO) {
+    const item =
+      typeof itemOrId === 'string'
+        ? this.data.find((i) => i.id === itemOrId)
+        : itemOrId;
+    if (item && ['Đang soạn thảo', 'Trả về'].includes(item.status)) {
       item.status = 'Gửi duyệt';
-      this.showNotification(`Gửi duyệt thành công!`, 'success');
-      this.updateVisibleButtons();
-      this.closeActionMenu();
-      this.applyFilters();
+      this.dataService.updateItem(item);
+      this.showNotification(`Gửi duyệt câu hỏi ${item.id} thành công!`, 'success');
     } else {
-      this.showNotification(`Không thể gửi duyệt mục đã chọn!`, 'error');
-      this.closeActionMenu();
+      this.showNotification('Không thể gửi duyệt!', 'error');
     }
+    this.updateVisibleButtons();
+    this.closeActionMenu();
+    this.applyFilters();
   }
+  
 
-  approveFromMenu(item: any) {
-    if (['Gửi duyệt', 'Ngừng áp dụng'].includes(item.status)) {
-      item.status = 'Duyệt áp dụng';
-      this.showNotification(`Phê duyệt thành công!`, 'success');
-      this.updateVisibleButtons();
-      this.closeActionMenu();
-      this.applyFilters();
-      this.cdr.detectChanges(); 
-    } else {
-      this.showNotification(`Không thể phê duyệt mục đã chọn!`, 'error');
-      this.closeActionMenu();
-    }
+approveFromMenu(item: QuestionDTO) { 
+  if (['Gửi duyệt', 'Ngừng áp dụng'].includes(item.status)) {
+    item.status = 'Duyệt áp dụng';
+    this.dataService.updateItem(item); 
+    this.showNotification(`Phê duyệt thành công!`, 'success');
+  } 
+  this.updateVisibleButtons();
+  this.closeActionMenu();
+  this.applyFilters();
+  this.cdr.detectChanges();
+}
+
+deactivateFromMenu(item: QuestionDTO) { 
+  if (item.status === 'Duyệt áp dụng') {
+    item.status = 'Ngừng áp dụng';
+    this.dataService.updateItem(item); 
+    this.showNotification(`Ngưng áp dụng thành công!`, 'success');
   }
+  this.updateVisibleButtons();
+  this.closeActionMenu();
+  this.applyFilters();
+}
 
-  deactivateFromMenu(item: any) {
-    if (item.status === 'Duyệt áp dụng') {
-      item.status = 'Ngừng áp dụng';
-      this.showNotification(`Ngưng áp dụng thành công!`, 'success');
-      this.updateVisibleButtons();
-      this.closeActionMenu();
-      this.applyFilters();
-    } else {
-      this.showNotification(`Không thể ngừng áp dụng mục đã chọn!`, 'error');
-      this.closeActionMenu();
-    }
+returnFromMenu(item: QuestionDTO) { 
+  if (['Gửi duyệt', 'Ngừng áp dụng'].includes(item.status)) {
+    item.status = 'Trả về';
+    this.dataService.updateItem(item); 
+    this.showNotification(`Trả về thành công!`, 'success');
   }
+  this.updateVisibleButtons();
+  this.closeActionMenu();
+  this.applyFilters();
+}
 
-  returnFromMenu(item: any) {
-    if (['Gửi duyệt', 'Ngừng áp dụng'].includes(item.status)) {
-      item.status = 'Trả về';
-      this.showNotification(`Trả về thành công!`, 'success');
-      this.updateVisibleButtons();
-      this.closeActionMenu();
-      this.applyFilters();
-    } else {
-      this.showNotification(`Không thể trả về mục đã chọn!`, 'error');
-      this.closeActionMenu();
-    }
-  }
-
-  canShowActionMenu(item: any): boolean {
+  canShowActionMenu(item: QuestionDTO): boolean { 
     return !this.isDisabled;
   }
 
-  openFormDrawer(item: any, mode: 'view' | 'edit' | 'create' = 'view') {
+  openFormDrawer(item: QuestionDTO, mode: 'view' | 'edit' | 'create' = 'view') {
     this.submitted = false;
     this.isEditMode = (mode === 'edit');
     this.isCreateMode = (mode === 'create');
-    this.isViewOnlyMode = false;
-
-    this.isFormVisible = true; // Mở drawer
-
+    this.isViewOnlyMode = mode === 'view';
+    this.isFormVisible = true;
+  
     if (mode === 'create') {
       this.editableItem = {
         question: '',
@@ -558,28 +579,26 @@ export class TableComponent implements OnInit, OnDestroy {
         description: '',
         type: '',
         point: '',
-        duration: '',
+        duration: '30s',
         status: 'Đang soạn thảo'
       };
     } else {
-      const currentItem = this.dataService.getItemById(item.id);
-      if (currentItem) {
-        this.editableItem = {
-          question: currentItem.question,
-          id: currentItem.id,
-          description: currentItem.description,
-          type: currentItem.type,
-          point: currentItem.point,
-          duration: currentItem.duration,
-          status: currentItem.status
-        };
-
-        if (['Duyệt áp dụng', 'Ngừng áp dụng'].includes(currentItem.status)) {
-          this.isViewOnlyMode = true;
-        }
+      this.editableItem = {
+        question: item.question,
+        id: item.id,
+        description: item.description,
+        type: item.type,
+        point: item.point,
+        duration: item.duration,
+        status: item.status
+      };
+  
+      if (['Duyệt áp dụng', 'Ngừng áp dụng'].includes(item.status)) {
+        this.isViewOnlyMode = true;
       }
     }
   }
+  
 
   closeDetailForm() {
     this.isFormVisible = false;
@@ -673,7 +692,7 @@ export class TableComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const formValue = this.editableItem;
+    const formValue = this.editableItem as QuestionDTO;
     console.log('Form Submitted:', formValue);
 
     if (this.isCreateMode) {
@@ -682,13 +701,11 @@ export class TableComponent implements OnInit, OnDestroy {
         this.showNotification('Mã câu hỏi đã tồn tại!', 'error');
         return;
       }
-      this.data.push({ ...formValue });
+      this.dataService.addItem({ ...formValue }); // Sử dụng service để thêm
       this.showNotification('Thêm mới câu hỏi thành công!', 'success');
+   
     } else if (this.isEditMode && !this.isViewOnlyMode) {
-      const dataIndex = this.data.findIndex(item => item.id === formValue.id);
-      if (dataIndex > -1) {
-        this.data[dataIndex] = { ...formValue };
-      }
+      this.dataService.updateItem(formValue); // Sử dụng service để cập nhật
       this.showNotification('Cập nhật câu hỏi thành công!', 'success');
     }
 
@@ -696,7 +713,6 @@ export class TableComponent implements OnInit, OnDestroy {
     this.closeDetailForm();
   }
 
-  // Thêm các method còn thiếu
   viewDetails(itemId: string) {
     const item = this.data.find(i => i.id === itemId);
     if (item) {
@@ -706,16 +722,20 @@ export class TableComponent implements OnInit, OnDestroy {
     }
   }
 
-  editItem(itemId: string) {
-    const item = this.data.find(i => i.id === itemId);
-    if (item) {
-      this.openFormDrawer(item, 'edit');
-    } else {
+  editItem(item: QuestionDTO) {
+    if (!item || !item.id) {
       this.showNotification('Không tìm thấy câu hỏi để chỉnh sửa!', 'error');
+      return;
     }
+    this.editableItem = { ...item }; 
+    this.isEditMode = true; 
+    this.isFormVisible = true; 
   }
-
+  
   updateItem(form: any) {
     this.onSubmit(form);
+  }
+  get selectedItemsTitle(): string {
+    return this.selectedItems.map(item => item.question).join(', ');
   }
 }

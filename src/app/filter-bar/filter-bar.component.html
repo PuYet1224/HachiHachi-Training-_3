@@ -3,12 +3,14 @@
     <div
       [ngClass]="{ 'selected-border': isChecked(item), 'disabled': isDisabled }"
       *ngFor="let item of items; let i = index"
+      (click)="toggleStatus(item)"
     >
       <a>{{ item }}</a>
       <input
         type="checkbox"
         [checked]="isChecked(item)"
         (change)="toggleStatus(item)"
+        (click)="$event.stopPropagation()"
         [disabled]="isDisabled"
       />
     </div>
@@ -107,4 +109,13 @@
       <button type="submit">Thêm</button>
     </form>
   </div>
+</div>
+<div *ngIf="notification" class="notification" [ngClass]="notification.type">
+  <span *ngIf="notification.type === 'success'" class="icon">
+    <img src="../../assets/check.png" alt="Success" />
+  </span>
+  <span *ngIf="notification.type === 'error'" class="icon">
+    <img src="../../assets/x-mark.png" alt="Error" />
+  </span>
+  <span>{{ notification.message }}</span>
 </div>

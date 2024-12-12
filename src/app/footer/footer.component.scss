@@ -97,3 +97,12 @@
 .right-c .ellipsis-button:hover {
   background-color: #e0e0e0;
 }
+.custom-pagination.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.custom-pagination.disabled select,
+.custom-pagination.disabled button {
+  cursor: not-allowed;
+}
