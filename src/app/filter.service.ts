@@ -5,7 +5,12 @@ import { BehaviorSubject, Subject } from 'rxjs';
   providedIn: 'root',
 })
 export class FilterService {
-  private selectedStatues = new BehaviorSubject<string[]>(['Đang soạn thảo']);
+  private selectedStatues = new BehaviorSubject<string[]>([
+    'Đang soạn thảo',
+    'Gửi duyệt',
+    'Đã duyệt',
+    'Ngừng áp dụng'
+  ]);
   selectedStatues$ = this.selectedStatues.asObservable();
 
   private searchText = new BehaviorSubject<string>('');

@@ -1,4 +1,5 @@
 @import "src/styles";
+
 #Filterbar {
   display: flex;
   align-items: center;
@@ -19,6 +20,7 @@
 .overflowing {
   overflow-x: auto;
 }
+
 #Filterbar::-webkit-scrollbar {
   height: 4px;
 }
@@ -27,14 +29,17 @@
   background-color: #008000;
   border-radius: 2px;
 }
+
 #Filterbar::-webkit-scrollbar-track {
   background-color: #e0e0e0;
 }
+
 .left-t {
   display: flex;
   gap: 20px;
   align-items: center;
 }
+
 .left-t div {
   border-radius: 999px;
   height: 28px;
@@ -45,6 +50,7 @@
   box-shadow: rgba(29, 30, 31, 0.15) 0px 1px 5px;
   border: 2px solid transparent;
 }
+
 .left-t div a {
   color: #959db3;
   font-family: "Mulish", sans-serif;
@@ -52,10 +58,9 @@
   overflow: hidden;
   text-overflow: clip;
   white-space: nowrap;
-}
-.left-t div a {
   margin-right: 10px;
 }
+
 .left-t div input[type="checkbox"] {
   -webkit-appearance: none;
   width: 16px;
@@ -83,13 +88,16 @@
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
 }
+
 .left-t .selected-border {
   border: 2px solid #008000;
 }
+
 .right-t {
   display: flex;
   gap: 20px;
 }
+
 .right-t div {
   width: auto;
   padding: 0 10px;
@@ -101,6 +109,7 @@
   font-size: 13px;
   background: #fff;
 }
+
 .right-t div img {
   width: 16px;
   height: 16px;
@@ -108,12 +117,15 @@
   filter: invert(54%) sepia(18%) saturate(369%) hue-rotate(180deg)
     brightness(90%) contrast(85%);
 }
+
 .right-t div:nth-of-type(1) img {
   margin-right: 0;
 }
+
 .right-t div:nth-of-type(2) a {
   color: #959db3;
 }
+
 .right-t div:nth-of-type(3) {
   background: #1a6634;
   color: #fff;
@@ -121,21 +133,33 @@
   text-overflow: clip;
   white-space: nowrap;
 }
+
 .right-t div:nth-of-type(3) img {
   filter: brightness(0) invert(1);
 }
-//form css
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+
 .form-modal {
   position: fixed;
   top: 0;
   left: 0;
+  transform: translateX(-100%); 
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
-  justify-content: center;
-  align-items: center;
+  align-items: stretch; 
   z-index: 1000;
+  transition: transform 0.3s ease;
+  
+  &.open {
+    transform: translateX(0); 
+  }
 }
 
 .form-container {
@@ -144,42 +168,40 @@
   font-family: "Mulish", serif;
   font-size: 13px;
   width: 417px;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  h3{
-    color: #1a6634;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.304);
-    width: 100%;
-    padding-bottom: 10px;
+  padding: 20px;
+  overflow-y: auto; 
+}
 
-    i{
-      margin:0 10px;
-    }
+.form-container h3 {
+  color: #1a6634;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.304);
+  width: 100%;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+
+  i {
+    margin: 0 10px;
   }
 }
 
 form div {
   margin-bottom: 15px;
 }
-form .idcode-des{
+
+form .idcode-des {
   display: flex;
   justify-content: space-between;
+  gap: 10px;
 }
-form .idcode-des div{
-  input{
-    width: 130px;
-  }
-  select{
-    width: 130px;
-  }
+
+form .idcode-des div input,
+form .idcode-des div select {
+  width: 130px;
 }
-form div:nth-of-type(5) input{
-  width: 150px;
-}
-form div:nth-of-type(6) select{
-  width: 150px;
-}
+
 form label {
   display: block;
   font-weight: bold;
@@ -188,11 +210,37 @@ form label {
 }
 
 form input,
-select {
-  width: 379px;
-  padding: 10px 0px;
+form select {
+  width: 100%;
+  height: 36.67px;
+  padding-left: 10px;
   border: 2px solid #ddd;
   border-radius: 2px;
+  box-sizing: border-box;
+  background-color: #fff; 
+  color: #000; 
+}
+
+form input:focus,
+form select:focus {
+  border-color: #008000; 
+}
+
+form input[disabled],
+form select[disabled],
+button[disabled] {
+  background-color: #e0e0e0; 
+  color: #a0a0a0; 
+  cursor: not-allowed;
+  border: 1px solid #c0c0c0; 
+}
+
+form input[disabled]::placeholder {
+  color: #c0c0c0; 
+}
+
+form button[disabled] {
+  opacity: 0.7; 
 }
 
 form button {
@@ -212,4 +260,80 @@ form button[type="button"] {
   background: #fff;
   color: #1a6634;
   box-shadow: rgba(29, 30, 31, 0.15) 0px 1px 5px;
+}
+
+.form-container .selected {
+  background-color: #fff;
+}
+
+.form-container .disabled {
+  background-color: #e0e0e0; 
+  color: #a0a0a0; 
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.error {
+  color: red;
+  font-size: 12px;
+}
+
+.form-container input:focus,
+.form-container select:focus {
+  border-color: #008000; 
+}
+
+.filter-input {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  
+  label {
+    font-weight: bold;
+    color: #343A40;
+  }
+  
+  input {
+    height: 28px;
+    padding: 0 10px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    font-size: 13px;
+    
+    &:focus {
+      border-color: #008000;
+      outline: none;
+    }
+    
+    &::placeholder {
+      color: #a0a0a0;
+    }
+  }
+}
+
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #4BB543; 
+  color: white;
+  padding: 15px 20px;
+  border-radius: 4px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  z-index: 1001;
+  
+  span {
+    flex-grow: 1;
+  }
+  
+  button {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    margin-left: 10px;
+  }
 }

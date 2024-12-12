@@ -1,7 +1,7 @@
 <div id="Filterbar" class="">
   <div class="left-t">
     <div
-      [ngClass]="{ 'selected-border': isChecked(item) }"
+      [ngClass]="{ 'selected-border': isChecked(item), 'disabled': isDisabled }"
       *ngFor="let item of items; let i = index"
     >
       <a>{{ item }}</a>
@@ -9,24 +9,27 @@
         type="checkbox"
         [checked]="isChecked(item)"
         (change)="toggleStatus(item)"
+        [disabled]="isDisabled"
       />
     </div>
   </div>
   <div class="right-t">
     <div>
-      <img src="../../assets//upload (1).png" alt="" />
+      <img src="../../assets/upload (1).png" alt="" />
     </div>
     <div>
-      <img src="../../assets//download.png" alt="" />
+      <img src="../../assets/download.png" alt="" />
       <a>Template</a>
     </div>
-    <div (click)="openAddNewForm()">
-      <img src="../../assets//plus.png" alt="" />
+    <div (click)="openAddNewForm()" [class.disabled]="isDisabled">
+      <img src="../../assets/plus.png" alt="" />
       <a>THÊM MỚI</a>
     </div>
   </div>
 </div>
-<div *ngIf="isFormVisible" class="form-modal">
+
+<!-- Drawer form cho Thêm Mới -->
+<div [class.open]="isFormVisible" class="form-modal">
   <div class="form-container">
     <h3>
       <i class="fa-solid fa-network-wired" style="color: #1a6634"></i> NGÂN HÀNG CÂU HỎI
@@ -45,7 +48,6 @@
         <div>
           <label for="idcode">Mã câu hỏi</label>
           <input
-            disabled
             id="idcode"
             type="text"
             [(ngModel)]="newItem.id"
@@ -67,8 +69,8 @@
       </div>
       <div>
         <label for="type-question">Loại câu hỏi</label>
-        <select>
-          <option value="-- Chọn --">-- Chọn --</option>
+        <select id="type-question" [(ngModel)]="newItem.type" name="type">
+          <option value="">-- Chọn --</option>
           <option value="Nhiều lựa chọn">Nhiều lựa chọn</option>
           <option value="Một lựa chọn">Một lựa chọn</option>
           <option value="Câu hỏi yes/no">Câu hỏi yes/no</option>
@@ -76,8 +78,8 @@
       </div>
       <div>
         <label for="point">Cách tính điểm</label>
-        <select>
-          <option value="-- Chọn --" selected>-- Chọn --</option>
+        <select id="point" [(ngModel)]="newItem.point" name="point">
+          <option value="">-- Chọn --</option>
           <option value="Đúng hết đáp án">Đúng hết đáp án</option>
           <option value="Từng đáp án đúng">Từng đáp án đúng</option>
           <option value="Trừ đáp án sai">Trừ đáp án sai</option>

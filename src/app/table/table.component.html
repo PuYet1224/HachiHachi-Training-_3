@@ -10,7 +10,7 @@
       <img src="../../assets/check.png" alt="" /><span>Phê duyệt</span>
     </button>
     <button *ngIf="visibleButtons.showDisable" (click)="deactivateItems()">
-      <img src="../../assets/x-mark.png" alt="" /><span>Ngưng hiển thị</span>
+      <img src="../../assets/x-mark.png" alt="" /><span>Ngưng áp dụng</span>
     </button>
     <button *ngIf="visibleButtons.showReturn" (click)="returnItems()">
       <img src="../../assets/turn-back.png" alt="" /><span>Trả về</span>
@@ -28,16 +28,20 @@
     </button>
   </div>
 </div>
+
+<!-- Table -->
 <div>
   <div class="table-container">
     <table>
       <thead>
         <tr>
-          <input
-            type="checkbox"
-            (change)="toggleSelectAll($event)"
-            [checked]="allSelected"
-          />
+          <th>
+            <input
+              type="checkbox"
+              (change)="toggleSelectAll($event)"
+              [checked]="allSelected"
+            />
+          </th>
           <th>Câu hỏi</th>
           <th>Phân nhóm</th>
           <th>Thời gian làm</th>
@@ -65,45 +69,69 @@
           </td>
           <td>{{ item.description }}</td>
           <td>{{ item.duration }}</td>
-          <td [ngClass]="getClassStatus(item.status)">{{ item.status }}</td>
+          <td [ngClass]="item.status | statusColor">{{ item.status }}</td>
           <td class="action-cell">
             <img
               src="../../assets/option.png"
               alt="Options"
               class="actions"
-              (click)="toggleActionMenu(item.id)"
+              (click)="canShowActionMenu(item) ? toggleActionMenu(item.id) : null"
+              [class.disabled]="isDisabled"
             />
             <div class="action-menu" *ngIf="activeActionMenuId === item.id">
               <ul>
-                <li (click)="viewDetails(item.id)">
-                  <img src="../../assets/view.png" alt="View" /> Xem chi tiết
-                </li>
-                <li (click)="editItem(item.id)">
+                <li *ngIf="item.status === 'Đang soạn thảo'" (click)="editItem(item.id)">
                   <img src="../../assets/pencil.png" alt="Edit" /> Chỉnh sửa
                 </li>
-                <li (click)="submitForApprovalFromMenu(item)">
+                <li *ngIf="item.status === 'Đang soạn thảo'" (click)="submitForApprovalFromMenu(item)">
                   <img src="../../assets/share.png" alt="Submit" /> Gửi duyệt
                 </li>
-                <li (click)="approveFromMenu(item)">
-                  <img src="../../assets/check.png" alt="Approve" /> Phê duyệt
-                </li>
-                <li (click)="deactivateFromMenu(item)">
-                  <img src="../../assets/x-mark.png" alt="Deactivate" /> Ngừng
-                  hiển thị
-                </li>
-                <li (click)="returnFromMenu(item)">
-                  <img src="../../assets/turn-back.png" alt="Return" /> Trả về
-                </li>
-                <li (click)="deleteItem(item.id)">
+                <li *ngIf="item.status === 'Đang soạn thảo'" (click)="deleteItem(item.id)">
                   <img src="../../assets/delete.png" alt="Delete" /> Xóa câu hỏi
                 </li>
+            
+                <li *ngIf="item.status === 'Gửi duyệt'" (click)="editItem(item.id)">
+                  <img src="../../assets/pencil.png" alt="Edit" /> Chỉnh sửa
+                </li>
+                <li *ngIf="item.status === 'Gửi duyệt'" (click)="approveFromMenu(item)">
+                  <img src="../../assets/check.png" alt="Approve" /> Phê duyệt
+                </li>
+                <li *ngIf="item.status === 'Gửi duyệt'" (click)="returnFromMenu(item)">
+                  <img src="../../assets/turn-back.png" alt="Return" /> Trả về
+                </li>
+            
+                <li *ngIf="item.status === 'Duyệt áp dụng'" (click)="openFormDrawer(item, 'view')">
+                  <img src="../../assets/view.png" alt="View" /> Xem chi tiết
+                </li>
+                <li *ngIf="item.status === 'Duyệt áp dụng'" (click)="deactivateFromMenu(item)">
+                  <img src="../../assets/x-mark.png" alt="Deactivate" /> Ngừng áp dụng
+                </li>
+            
+                <li *ngIf="item.status === 'Ngừng áp dụng'" (click)="openFormDrawer(item, 'view')">
+                  <img src="../../assets/view.png" alt="View" /> Xem chi tiết
+                </li>
+                <li *ngIf="item.status === 'Ngừng áp dụng'" (click)="approveFromMenu(item)">
+                  <img src="../../assets/check.png" alt="Approve" /> Phê duyệt
+                </li>
+                <li *ngIf="item.status === 'Ngừng áp dụng'" (click)="returnFromMenu(item)">
+                  <img src="../../assets/turn-back.png" alt="Return" /> Trả về
+                </li>
+            
+                <li *ngIf="item.status === 'Trả về'" (click)="editItem(item.id)">
+                  <img src="../../assets/pencil.png" alt="Edit" /> Chỉnh sửa
+                </li>
+                <li *ngIf="item.status === 'Trả về'" (click)="submitForApprovalFromMenu(item)">
+                  <img src="../../assets/share.png" alt="Submit" /> Gửi duyệt
+                </li>
               </ul>
-            </div>
+            </div>            
           </td>
         </tr>
       </tbody>
     </table>
   </div>
+
+  <!-- Notification -->
   <div *ngIf="notification" class="notification" [ngClass]="notification.type">
     <span *ngIf="notification.type === 'success'" class="icon">
       <img src="../../assets/check.png" alt="Success" />
@@ -113,148 +141,180 @@
     </span>
     <span>{{ notification.message }}</span>
   </div>
-  <!-- xác nhận xóa -->
-  <div *ngIf="isDeleteModalVisible" class="modal-overlay">
-    <div class="modal">
-      <h3 class="modal-title">
-        <i class="fa-solid fa-triangle-exclamation" style="color: #fd7676"></i>
-        <span>XÓA CÂU HỎI</span>
-      </h3>
-      <span>Bạn chắc chắn muốn xóa các mục đã chọn?</span>
-      <span class="content-text">
-        Hệ thống của hàng Hachi Hachi có mặt từ năm nào?
-      </span>
-      <span class="warning-text">
-        Đơn vị bị xóa sẽ <strong>KHÔNG</strong> thể khôi phục lại.
-      </span>
-      <div class="modal-actions">
-        <button class="cancel-btn" (click)="closeDeleteModal()">
-          KHÔNG XÓA
-        </button>
-        <button class="delete-btn" (click)="confirmDelete()">
-          <i class="fa-regular fa-trash-can" style="color: #fff"></i>
-          <span>XÓA</span>
-        </button>
-      </div>
+
+<div *ngIf="isDeleteModalVisible" class="modal-overlay">
+  <div class="modal">
+    <h3 class="modal-title">
+      <i class="fa-solid fa-triangle-exclamation" style="color: #fd7676"></i>
+      <span>XÓA CÂU HỎI</span>
+    </h3>
+    <span>Bạn chắc chắn muốn xóa các mục đã chọn?</span>
+    <span
+      class="content-text"
+      title="Hệ thống của hàng Hachi Hachi có mặt từ năm nào?"
+    >
+      Hệ thống của hàng Hachi Hachi có mặt từ năm nào?
+    </span>
+    <span class="warning-text">
+      Đơn vị bị xóa sẽ <strong>KHÔNG</strong> thể khôi phục lại.
+    </span>
+    <div class="modal-actions">
+      <button class="cancel-btn" (click)="closeDeleteModal()">KHÔNG XÓA</button>
+      <button class="delete-btn" (click)="confirmDelete()">
+        <i class="fa-regular fa-trash-can" style="color: #fff"></i>
+        <span>XÓA</span>
+      </button>
     </div>
   </div>
-  <!-- Form modal for details or edit -->
-  <div *ngIf="isFormVisible" class="form-modal">
+</div>
+
+
+  <div [class.open]="isFormVisible" class="form-modal">
     <div class="form-container">
       <h3>
         <i
           class="fa-solid"
-          [ngClass]="isEditMode ? 'fa-pencil' : 'fa-circle-info'"
-          [style.color]="isEditMode ? '#1a6634' : '#1a6634'"
+          [ngClass]="isEditMode ? 'fa-pencil' : (isCreateMode ? 'fa-circle-info' : 'fa-circle-info')"
+          [style.color]="'#1a6634'"
         ></i>
-        {{ isEditMode ? "CHỈNH SỬA CÂU HỎI" : "CHI TIẾT CÂU HỎI" }}
+        {{ isEditMode ? "CHỈNH SỬA CÂU HỎI" : (isViewOnlyMode ? "CHI TIẾT CÂU HỎI" : (isCreateMode ? "THÊM CÂU HỎI" : "CHI TIẾT CÂU HỎI")) }}
       </h3>
-      <form (ngSubmit)="isEditMode ? updateItem() : null">
+      <form #form="ngForm" (ngSubmit)="onSubmit(form)">
         <div>
-          <label for="question">Tên câu hỏi</label>
+          <label for="question">Tên câu hỏi <span style="color:red">*</span></label>
           <input
             id="question"
             type="text"
-            [ngModel]="editableItem?.question"
-            (ngModelChange)="editableItem.question = $event"
+            [(ngModel)]="editableItem.question"
             name="question"
-            disabled
+            required
+            [disabled]="isViewOnlyMode || (!isCreateMode && !isEditMode)"
           />
+          <div *ngIf="submitted && !editableItem.question" class="error">
+            Tên câu hỏi là bắt buộc.
+          </div>
         </div>
         <div class="idcode-des">
           <div>
-            <label for="idcode">Mã câu hỏi</label>
+            <label for="idcode">Mã câu hỏi <span style="color:red">*</span></label>
             <input
               id="idcode"
               type="text"
-              [ngModel]="editableItem?.id"
-              (ngModelChange)="editableItem.id = $event"
+              [(ngModel)]="editableItem.id"
               name="idcode"
-              disabled
+              required
+              [disabled]="isViewOnlyMode || (!isCreateMode && !isEditMode)"
             />
+            <div *ngIf="submitted && !editableItem.id" class="error">
+              Mã câu hỏi là bắt buộc.
+            </div>
           </div>
           <div>
-            <label for="description">Phân nhóm</label>
+            <label for="description">Phân nhóm <span style="color:red">*</span></label>
             <select
               id="description"
-              [ngModel]="editableItem?.description"
-              (ngModelChange)="editableItem.description = $event"
+              [(ngModel)]="editableItem.description"
+              (ngModelChange)="onDescriptionChange()"
               name="description"
-              [disabled]="!isEditMode"
+              required
+              [disabled]="isViewOnlyMode || (!isCreateMode && !isEditMode)"
             >
+              <option value="">-- Chọn --</option>
               <option value="Thương hiệu">Thương hiệu</option>
               <option value="Văn hóa công ty">Văn hóa công ty</option>
               <option value="Quy định nội bộ">Quy định nội bộ</option>
             </select>
+            <div *ngIf="submitted && !editableItem.description" class="error">
+              Phân nhóm là bắt buộc.
+            </div>
           </div>
         </div>
         <div>
-          <label for="type-question">Loại câu hỏi</label>
+          <label for="type-question">Loại câu hỏi <span style="color:red">*</span></label>
           <select
             id="type-question"
-            [ngModel]="editableItem?.type"
-            (ngModelChange)="editableItem.type = $event"
+            [(ngModel)]="editableItem.type"
+            (ngModelChange)="onTypeChange()"
             name="type-question"
-            [disabled]="!isEditMode"
+            required
+            [disabled]="isViewOnlyMode || (!isCreateMode && !isEditMode) || !editableItem.description"
           >
+            <option value="">-- Chọn loại câu hỏi --</option>
             <option value="Nhiều lựa chọn">Nhiều lựa chọn</option>
             <option value="Dạng câu một lựa chọn">Một lựa chọn</option>
             <option value="Câu hỏi yes/no">Câu hỏi yes/no</option>
           </select>
+          <div *ngIf="submitted && !editableItem.type && editableItem.description" class="error">
+            Loại câu hỏi là bắt buộc.
+          </div>
         </div>
         <div>
-          <label for="point">Cách tính điểm</label>
+          <label for="point">Cách tính điểm <span style="color:red">*</span></label>
           <select
             id="point"
-            [ngModel]="editableItem?.point"
-            (ngModelChange)="editableItem.point = $event"
+            [(ngModel)]="editableItem.point"
             name="point"
-            [disabled]="!isEditMode"
+            required
+            [disabled]="isViewOnlyMode || (!isCreateMode && !isEditMode) || editableItem.type !== 'Nhiều lựa chọn'"
           >
+            <option value="">-- Chọn cách tính điểm --</option>
             <option value="Đúng hết đáp án">Đúng hết đáp án</option>
             <option value="Từng đáp án đúng">Từng đáp án đúng</option>
             <option value="Trừ đáp án sai">Trừ đáp án sai</option>
           </select>
+          <div *ngIf="submitted && editableItem.type === 'Nhiều lựa chọn' && !editableItem.point" class="error">
+            Cách tính điểm là bắt buộc cho loại nhiều lựa chọn.
+          </div>
         </div>
         <div>
-          <label for="duration">Thời gian làm</label>
+          <label for="duration">Thời gian làm <span style="color:red">*</span></label>
           <input
             id="duration"
             type="text"
-            [ngModel]="editableItem?.duration"
-            (ngModelChange)="editableItem.duration = $event"
+            [(ngModel)]="editableItem.duration"
             name="duration"
-            [disabled]="!isEditMode"
+            required
+            [disabled]="isViewOnlyMode || (!isCreateMode && !isEditMode)"
           />
+          <div *ngIf="submitted && !editableItem.duration" class="error">
+            Thời gian làm là bắt buộc.
+          </div>
         </div>
         <div>
-          <label for="status">Trạng thái</label>
+          <label for="status">Trạng thái <span style="color:red">*</span></label>
           <select
             id="status"
-            [ngModel]="editableItem?.status"
-            (ngModelChange)="editableItem.status = $event"
+            [(ngModel)]="editableItem.status"
             name="status"
-            [disabled]="!isEditMode"
+            required
+            [disabled]="isViewOnlyMode || (!isCreateMode && !isEditMode)"
           >
+            <option value="">-- Chọn trạng thái --</option>
             <option value="Đang soạn thảo">Đang soạn thảo</option>
             <option value="Gửi duyệt">Gửi duyệt</option>
             <option value="Đã duyệt">Đã duyệt</option>
             <option value="Ngừng áp dụng">Ngừng áp dụng</option>
             <option value="Trả về">Trả về</option>
           </select>
+          <div *ngIf="submitted && !editableItem.status" class="error">
+            Trạng thái là bắt buộc.
+          </div>
         </div>
-        <button type="button" (click)="closeDetailForm()">Đóng</button>
-        <button *ngIf="isEditMode" type="submit" (click)="updateItem()">Cập nhật</button>
+        <div class="form-actions">
+          <button type="button" (click)="closeDetailForm()">Đóng</button>
+          <button *ngIf="isCreateMode" type="submit">Thêm mới</button>
+          <button *ngIf="isEditMode && !isViewOnlyMode" type="submit">Cập nhật</button>
+        </div>
       </form>
     </div>
   </div>
 
-  <app-footer 
-  [rowsPerPage]="itemsPerPage"
-  [rowCount]="filterData.length"
-  [currentPage]="currentPage"
-  (pageChange)="onPageChange($event)"
-  (itemsPerPageChange)="onItemsPerPageChange($event)"
-></app-footer>
-
+  <!-- Footer -->
+  <app-footer
+    [rowsPerPage]="itemsPerPage"
+    [rowCount]="filterData.length"
+    [currentPage]="currentPage"
+    (pageChange)="onPageChange($event)"
+    (itemsPerPageChange)="onItemsPerPageChange($event)"
+  ></app-footer>
 </div>

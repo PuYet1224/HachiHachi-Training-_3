@@ -1,16 +1,19 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
 import { AppComponent } from './app.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { HeaderwideComponent } from './headerwide/headerwide.component';
 import { FilterBarComponent } from './filter-bar/filter-bar.component';
-import { CommonModule } from '@angular/common';
 import { SearchBarComponent } from './search-bar/search-bar.component';
 import { TableComponent } from './table/table.component';
 import { FooterComponent } from './footer/footer.component';
-import { FormsModule } from '@angular/forms';
+import { StatusColorPipe } from './status-color.pipe';
 
 @NgModule({
   declarations: [
@@ -21,12 +24,15 @@ import { FormsModule } from '@angular/forms';
     SearchBarComponent,
     TableComponent,
     FooterComponent,
+    StatusColorPipe,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     CommonModule,
     FormsModule,
+    MatSidenavModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
