@@ -94,7 +94,9 @@ export class FilterBarComponent implements OnInit, OnDestroy {
     this.showNotification('Thêm câu hỏi thành công!', 'success');
     this.isFormVisible = false;
     this.resetForm();
+    this.filterService.updateSelectedStatuses(this.selectedStatuses);
   }
+  
   
 
   public resetForm() {

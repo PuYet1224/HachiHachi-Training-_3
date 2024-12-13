@@ -337,3 +337,13 @@ form button[type="button"] {
   height: 16px;
   filter: invert(1);
 }
+form select option:hover {
+  background-color: #008000; 
+  color: white; 
+}
+
+select option:hover {
+  background-color: #008000; 
+  color: white; 
+}
+

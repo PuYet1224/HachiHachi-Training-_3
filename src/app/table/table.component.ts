@@ -130,6 +130,7 @@ export class TableComponent implements OnInit, OnDestroy {
       this.uiStateService.setActionBarVisibility(false);
       this.isDisabled = false;
     }
+    this.cdr.detectChanges();
   }
   
   resetFilters() {

@@ -262,7 +262,6 @@
             [(ngModel)]="editableItem.point"
             name="point"
             required
-            [disabled]="isViewOnlyMode || (!isCreateMode && !isEditMode) || editableItem.type !== 'Nhiều lựa chọn'"
           >
             <option value="">-- Chọn --</option>
             <option value="Đúng hết đáp án">Đúng hết đáp án</option>
