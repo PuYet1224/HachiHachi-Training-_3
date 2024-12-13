@@ -49,6 +49,7 @@
   background: #fff;
   box-shadow: rgba(29, 30, 31, 0.15) 0px 1px 5px;
   border: 2px solid transparent;
+  cursor: pointer;
 }
 
 .left-t div a {
@@ -132,6 +133,7 @@
   overflow: hidden;
   text-overflow: clip;
   white-space: nowrap;
+  cursor: pointer;
 }
 
 .right-t div:nth-of-type(3) img {
@@ -142,7 +144,6 @@
   pointer-events: none;
   opacity: 0.5;
 }
-
 
 .form-modal {
   position: fixed;
@@ -235,8 +236,8 @@ button[disabled] {
   border: 1px solid #c0c0c0; 
 }
 
-form input[disabled]::placeholder {
-  color: #c0c0c0; 
+form select#status option {
+  cursor: pointer;
 }
 
 form button[disabled] {
