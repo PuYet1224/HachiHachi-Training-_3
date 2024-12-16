@@ -1,4 +1,3 @@
-// table.component.ts
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { TabledataService } from '../tabledata.service';
 import { FilterService } from '../filter.service';
@@ -13,7 +12,7 @@ import { QuestionDTO } from '../question.dto';
   styleUrls: ['./table.component.scss'],
 })
 export class TableComponent implements OnInit, OnDestroy {
-  data: QuestionDTO[] = []; // Sử dụng QuestionDTO
+  data: QuestionDTO[] = [];
   filterData: QuestionDTO[] = [];
   pagedData: QuestionDTO[] = [];
 
@@ -45,7 +44,7 @@ export class TableComponent implements OnInit, OnDestroy {
   submitted: boolean = false; 
   isFormVisible: boolean = false;
 
-  editableItem: Partial<QuestionDTO> = { // Sử dụng Partial<QuestionDTO>
+  editableItem: Partial<QuestionDTO> = { 
     question: '',
     id: '',
     description: '',
@@ -86,7 +85,7 @@ export class TableComponent implements OnInit, OnDestroy {
   
     this.subscriptions.add(
       this.filterService.reset$.subscribe(() => {
-        this.resetFilters(); // Reset các bộ lọc
+        this.resetFilters(); 
       })
     );
   
@@ -417,6 +416,9 @@ export class TableComponent implements OnInit, OnDestroy {
     }
     this.updateVisibleButtons();
     this.applyFilters();
+
+    this.closePopup();
+
 }
 
 approveItems() {
@@ -434,6 +436,8 @@ approveItems() {
   }
   this.updateVisibleButtons();
   this.applyFilters();
+
+  this.closePopup();
 }
 
 deactivateItems() {
